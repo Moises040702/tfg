@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sesiones"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/tvHoySesiones"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="Tiempo"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/tvHoyTiempo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0 min"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="Series"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/tvHoySeries"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="Repeticiones"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/tvHoyReps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="Volumen"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/tvHoyVolumen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0.0 kg"/>
+</LinearLayout>

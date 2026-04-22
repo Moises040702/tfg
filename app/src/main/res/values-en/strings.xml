@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- General -->
+    <string name="app_name">NexaFit</string>
+    <string name="volver">Back</string>
+    <string name="volver_desc">Back</string>
+    <string name="guardar">Save</string>
+    <string name="cancelar">Cancel</string>
+    <string name="si">Yes</string>
+    <string name="no">No</string>
+
+    <!-- Ajustes -->
+    <string name="notificaciones">Notifications</string>
+    <string name="modo_oscuro">Dark mode</string>
+    <string name="recordatorios">Reminders</string>
+    <string name="btn_espanol">Spanish</string>
+    <string name="btn_ingles">English</string>
+
+    <string name="notificaciones_activadas">Notifications enabled</string>
+    <string name="notificaciones_desactivadas">Notifications disabled</string>
+    <string name="modo_oscuro_activado">Dark mode enabled</string>
+    <string name="modo_oscuro_desactivado">Dark mode disabled</string>
+    <string name="recordatorios_activados">Reminders enabled</string>
+    <string name="recordatorios_desactivados">Reminders disabled</string>
+
+    <!-- Login -->
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Log in</string>
+    <string name="olvidado_contraseña">Have you forgotten your password?</string>
+    <string name="no_account_register">Don\'t have an account? Sign up</string>
+
+    <!-- Recuperar contraseña -->
+    <string name="recuperar_contrasena">Recover password</string>
+    <string name="instrucciones_recuperar">Enter your email and we will send you a link to reset your password.</string>
+    <string name="correo_de_recuperacion">Email</string>
+    <string name="enviar_enlace">Send link</string>
+
+    <!-- Registro -->
+    <string name="crear_cuenta">Create account</string>
+    <string name="repetir_contraseña">Repeat password</string>
+    <string name="registrarse">Sign up</string>
+    <string name="ya_tienes_cuenta">Already have an account? Log in</string>
+    <string name="registro_desc">Weekly Weight Record</string>
+
+    <!-- Cerrar sesión -->
+    <string name="cerrar_sesion">Log out</string>
+    <string name="confirmar_cerrar_sesion">Do you want to log out?</string>
+    <string name="yes">Yes</string>
+    <string name="no_cancel">Cancel</string>
+
+    <!-- Main -->
+    <string name="aentrenar">Go training</string>
+    <string name="bienvenido">Welcome</string>
+    <string name="rutinas">Workouts</string>
+    <string name="progreso">Progress</string>
+    <string name="peso">Weight</string>
+    <string name="ajustes">Settings</string>
+
+    <!-- Rutinas -->
+    <string name="rutina_desconocida">Unknown routine</string>
+    <string name="nueva_rutina">New routine</string>
+    <string name="editar_rutina">Edit routine</string>
+    <string name="eliminar_rutina">Delete routine</string>
+    <string name="añadir">Add</string>
+    <string name="añadir_ejercicio">Add exercise</string>
+    <string name="introduce_nombre">Enter a name</string>
+    <string name="ejercicio_anadido">Exercise added</string>
+    <string name="eliminar_ejercicio">Delete exercise</string>
+    <string name="confirmar_eliminar">Are you sure you want to delete it?</string>
+    <string name="ejercicio_eliminado">Exercise deleted</string>
+    <string name="registrar_realizacion">Register workout</string>
+    <string name="completa_campos">Fill in all fields</string>
+    <string name="series_mayores_0">Series must be greater than 0</string>
+    <string name="reps_mayores_0">Repetitions must be greater than 0</string>
+    <string name="introduce_reps">Enter repetitions</string>
+    <string name="reps_invalidas">Invalid repetitions</string>
+    <string name="sesion_guardada">Session saved</string>
+    <string name="no_pudo_guardar">Could not save</string>
+    <string name="añadido_manual">Added manually</string>
+
+    <!-- NUEVAS -->
+    <string name="series_realizadas">Sets completed</string>
+    <string name="repeticiones_por_serie">Repetitions per set</string>
+    <string name="peso_utilizado">Weight used (kg)</string>
+
+    <!-- Categorías -->
+    <string name="biceps">Biceps</string>
+    <string name="pecho">Chest</string>
+    <string name="espalda">Back</string>
+    <string name="piernas">Legs</string>
+    <string name="hombros">Shoulders</string>
+    <string name="abdomen">Abs</string>
+    <string name="categoria_desconocida">Unknown</string>
+
+    <!-- Peso -->
+    <string name="ingresa_peso">Enter your weight</string>
+    <string name="peso_7_dias">You can only record your weight once every 7 days</string>
+    <string name="peso_guardado">Weight saved</string>
+    <string name="valor_invalido">Enter a valid value</string>
+    <string name="peso_actual">Current weight</string>
+    <string name="nuevo_peso">New weight</string>
+    <string name="kilogramos">Kilograms</string>
+    <string name="kg">kg</string>
+    <string name="formato_peso">%.1f kg</string>
+    <string name="historial_pesos">Weight History</string>
+
+    <!-- Progreso -->
+    <string name="estadisticas">Statistics</string>
+    <string name="minutos">Minutes</string>
+    <string name="entrenamientos">Workouts</string>
+
+    <!-- ProgresoActivity -->
+    <string name="mi_progreso">My Progress</string>
+    <string name="leyenda">Legend</string>
+    <string name="pendiente">Pending</string>
+    <string name="a_medias">Half done (incomplete workout)</string>
+    <string name="cumplido">Completed (workout done)</string>
+    <string name="no_fui">Didn’t go</string>
+
+    <!-- Semana -->
+    <string name="lunes">Mon</string>
+    <string name="martes">Tue</string>
+    <string name="miercoles">Wed</string>
+    <string name="jueves">Thu</string>
+    <string name="viernes">Fri</string>
+    <string name="sabado">Sat</string>
+    <string name="domingo">Sun</string>
+
+    <!-- Estadísticas -->
+    <string name="hoy">Today</string>
+    <string name="semana">Week</string>
+    <string name="mes">Month</string>
+    <string name="total_historico">Total history</string>
+    <string name="sesiones">Sessions</string>
+    <string name="tiempo">Time</string>
+    <string name="series">Sets</string>
+    <string name="repeticiones">Reps</string>
+    <string name="peso_total">Total weight used</string>
+    <string name="se_reinicia_dia">Resets automatically each day</string>
+
+    <!-- Ejercicios -->
+    <string name="press_banca">Bench press</string>
+    <string name="press_inclinado">Incline press</string>
+    <string name="curl_barra">Barbell curl</string>
+    <string name="curl_martillo">Hammer curl</string>
+    <string name="dominadas">Pull-ups</string>
+    <string name="remo_mancuerna">One-arm dumbbell row</string>
+    <string name="sentadilla_hack">Hack squat</string>
+    <string name="zancadas">Lunges</string>
+    <string name="press_militar">Dumbbell shoulder press</string>
+    <string name="elevaciones_laterales">Lateral raises</string>
+    <string name="crunch_polea">Cable crunch</string>
+
+    <!-- Nivel -->
+    <string name="nivel_principiante">Beginner</string>
+    <string name="nivel_intermedio">Intermediate</string>
+    <string name="nivel_avanzado">Advanced</string>
+
+    <string name="desconocida">Unknown</string>
+
+    <string name="desc_volver">Go back</string>
+    <string name="correo_ejemplo">example@email.com</string>
+    <string name="hint_nombre">First Name</string>
+    <string name="hint_apellidos">Last Name</string>
+    <string name="hint_fecha_nacimiento">Date of Birth</string>
+    <string name="hint_telefono">Phone</string>
+    <string name="hint_dni">ID Number</string>
+    <string name="btn_guardar_cambios">Save Changes</string>
+    <string name="btn_cambiar_contrasena">Change Password</string>
+    <string name="btn_darse_baja">Delete Account</string>
+
+    <string name="hint_nombre_ejercicio">Exercise name</string>
+    <string name="hint_ciudad">City</string>
+
+    <!-- Ciudades -->
+    <string-array name="city_codes">
+        <item>A_CORUNA</item>
+        <item>ALBACETE</item>
+        <item>ALICANTE</item>
+        <item>ALMERIA</item>
+        <item>AVILA</item>
+        <item>BADAJOZ</item>
+        <item>BARCELONA</item>
+        <item>BILBAO</item>
+        <item>CADIZ</item>
+        <item>CORDOBA</item>
+        <item>GIJON</item>
+        <item>GRANADA</item>
+        <item>HUELVA</item>
+        <item>JAEN</item>
+        <item>LAS_PALMAS</item>
+        <item>LEON</item>
+        <item>LLEIDA</item>
+        <item>LOGRONO</item>
+        <item>MADRID</item>
+        <item>MALAGA</item>
+        <item>MURCIA</item>
+        <item>OVIEDO</item>
+        <item>PALMA</item>
+        <item>PAMPLONA</item>
+        <item>SALAMANCA</item>
+        <item>SAN_SEBASTIAN</item>
+        <item>SANTANDER</item>
+        <item>SANTIAGO</item>
+        <item>SEVILLA</item>
+        <item>TARRAGONA</item>
+        <item>TOLEDO</item>
+        <item>VALENCIA</item>
+        <item>VALLADOLID</item>
+        <item>VIGO</item>
+        <item>ZARAGOZA</item>
+    </string-array>
+
+    <string-array name="ciudades_espana">
+        <item>Corunna</item>
+        <item>Albacete</item>
+        <item>Alicante</item>
+        <item>Almeria</item>
+        <item>Avila</item>
+        <item>Badajoz</item>
+        <item>Barcelona</item>
+        <item>Bilbao</item>
+        <item>Cadiz</item>
+        <item>Cordoba</item>
+        <item>Gijon</item>
+        <item>Granada</item>
+        <item>Huelva</item>
+        <item>Jaen</item>
+        <item>Las Palmas de Gran Canaria</item>
+        <item>Leon</item>
+        <item>Lleida</item>
+        <item>Logrono</item>
+        <item>Madrid</item>
+        <item>Malaga</item>
+        <item>Murcia</item>
+        <item>Oviedo</item>
+        <item>Palma de Mallorca</item>
+        <item>Pamplona</item>
+        <item>Salamanca</item>
+        <item>San Sebastian</item>
+        <item>Santander</item>
+        <item>Santiago de Compostela</item>
+        <item>Seville</item>
+        <item>Tarragona</item>
+        <item>Toledo</item>
+        <item>Valencia</item>
+        <item>Valladolid</item>
+        <item>Vigo</item>
+        <item>Zaragoza</item>
+    </string-array>
+
+</resources>

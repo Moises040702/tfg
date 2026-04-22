@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="?android:attr/windowBackground">
+
+    <!-- Botón volver -->
+    <ImageButton
+        android:id="@+id/btnVolverAjustes"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/volver"
+        android:src="@android:drawable/ic_media_previous"
+        app:tint="?attr/colorPrimary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <!-- Título Ajustes -->
+    <TextView
+        android:id="@+id/tvAjustesTitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ajustes"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="?android:textColorPrimary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/btnVolverAjustes"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Switch Notificaciones -->
+    <Switch
+        android:id="@+id/switchNotificaciones"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/notificaciones"
+        android:textSize="16sp"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/tvAjustesTitulo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Switch Modo Oscuro -->
+    <Switch
+        android:id="@+id/switchModoOscuro"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/modo_oscuro"
+        android:textSize="16sp"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/switchNotificaciones"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp"/>
+
+    <!-- Switch Recordatorios -->
+    <Switch
+        android:id="@+id/switchRecordatorios"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/recordatorios"
+        android:textSize="16sp"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/switchModoOscuro"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp"/>
+
+    <!-- Contenedor horizontal para banderas -->
+    <LinearLayout
+        android:id="@+id/contenedorBanderas"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/switchRecordatorios"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp">
+
+        <!-- Bandera España -->
+        <ImageButton
+            android:id="@+id/btnEspaniol"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Español"
+            android:scaleType="centerCrop"
+            android:src="@drawable/espana"
+            android:alpha="1"/>
+
+        <!-- Bandera Reino Unido -->
+        <ImageButton
+            android:id="@+id/btnIngles"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="English"
+            android:scaleType="centerCrop"
+            android:src="@drawable/reinounido"
+            android:alpha="1"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

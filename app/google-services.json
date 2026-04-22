@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "402052109069",
+    "project_id": "nexafit-4f24f",
+    "storage_bucket": "nexafit-4f24f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:402052109069:android:1e6af1ddfa8c3b31299644",
+        "android_client_info": {
+          "package_name": "com.example.gymapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASUYDobCeXMMPKWjTLoDdikMlvupET3_8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

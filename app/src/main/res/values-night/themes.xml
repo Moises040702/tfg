@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.GymApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <!-- zColores base (toman los de values-night/colors.xml) -->
+        <item name="android:colorBackground">@color/background</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+
+    </style>
+
+</resources>

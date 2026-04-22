@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+   >
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/nexafit_icono"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/nexafit_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.GymApp">
+
+
+    <!-- LoginActivity será la primera pantalla al iniciar la app -->
+        <activity
+            android:name="com.example.gymapp.LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Pantalla principal tras iniciar sesión -->
+        <activity android:name="com.example.gymapp.MainActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name="com.example.gymapp.RutinasActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name="com.example.gymapp.DetalleRutinaActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name="com.example.gymapp.ProgresoActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name="com.example.gymapp.AjustesActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name="com.example.gymapp.RecuperarContraseñaActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name="com.example.gymapp.RegistroPesoActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name="com.example.gymapp.EstadisticasActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity
+            android:name=".VideoRutinaActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden" />
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".UsuarioActivity"/>
+
+
+
+
+    </application>
+
+</manifest>

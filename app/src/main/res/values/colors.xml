@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Colores base -->
+    <color name="background">#FFFFFF</color>
+    <color name="text_primary">#000000</color>
+
+    <!-- Colores del theme -->
+    <color name="purple_500">#6200EE</color>
+    <color name="purple_700">#3700B3</color>
+    <color name="teal_200">#03FFE6</color>
+    <color name="teal_700">#018786</color>
+
+    <!-- Otros -->
+    <color name="white">#FFFFFF</color>
+    <color name="green">#07980D</color>
+    <color name="orange">#D34214</color>
+    <color name="red">#FF0000</color>
+    <color name="grey">#31FFFFFF</color>
+    <color name="yellow">#FFC107</color>
+    <color name="day_green">#38FF00</color>
+    <color name="text_hint">#666666</color>
+    <color name="edittext_bg">#F0F0F0</color>
+
+</resources>
