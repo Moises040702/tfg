@@ -35,10 +35,8 @@ public class RegisterActivity extends BaseActivity {
         goLoginText = findViewById(R.id.goLoginText);
         backButton = findViewById(R.id.backButton);
 
-
         setupPasswordToggle(passwordInput);
         setupPasswordToggle(confirmPasswordInput);
-
 
         backButton.setOnClickListener(v -> finish());
 
@@ -58,7 +56,7 @@ public class RegisterActivity extends BaseActivity {
             }
 
             if (!isValidPassword(pass)) {
-                Toast.makeText(this, "Debe tener 6-12 caracteres, mayúsculas, minúsculas y un carácter especial", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Debe tener 6-12 caracteres, mayúsculas, minúsculas y un carácter especial (@, _, !, etc.)", Toast.LENGTH_LONG).show();
                 return;
             }
 
@@ -89,9 +87,11 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private boolean isValidPassword(String password) {
-        String pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{6,12}$";
+        String pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{6,12}$";
         return password.matches(pattern);
     }
+
+    @SuppressLint({"ClickableViewAccessibility", "UseCompatLoadingForDrawables"})
     private void setupPasswordToggle(EditText passwordField) {
         passwordField.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_UP) {
