@@ -3,14 +3,15 @@ package com.example.gymapp;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -18,10 +19,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Locale;
-
-import android.content.res.Configuration;
-import android.view.MotionEvent;
-import android.graphics.drawable.Drawable;
 
 public class LoginActivity extends BaseActivity {
 
@@ -35,15 +32,35 @@ public class LoginActivity extends BaseActivity {
 
     private static final String PREFS_AJUSTES = "Ajustes";
 
+    // Evita abrir MainActivity dos veces en la misma ejecución de LoginActivity
+    private boolean entradaMainEnCurso = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        aplicarIdiomaYModoOscuro();
+        aplicarIdioma();
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
         auth = FirebaseAuth.getInstance();
+
+        FirebaseUser user = auth.getCurrentUser();
+
+        // Si ya hay sesión iniciada, NO pintamos la pantalla de login.
+        // Así evitamos que se vea login primero y luego MainActivity.
+        if (user != null && user.isEmailVerified()) {
+            prepararAjustesUsuarioYEntrar(user.getUid());
+            return;
+        }
+
+        // Si hay usuario pero no está verificado, cerramos sesión y mostramos login.
+        if (user != null && !user.isEmailVerified()) {
+            auth.signOut();
+        }
+
+        entradaMainEnCurso = false;
+
+        setContentView(R.layout.activity_login);
 
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
@@ -63,14 +80,18 @@ public class LoginActivity extends BaseActivity {
                 return;
             }
 
+            if (entradaMainEnCurso) {
+                return;
+            }
+
             auth.signInWithEmailAndPassword(email, password)
                     .addOnSuccessListener(authResult -> {
 
-                        FirebaseUser user = auth.getCurrentUser();
+                        FirebaseUser usuarioLogin = auth.getCurrentUser();
 
-                        if (user != null && user.isEmailVerified()) {
+                        if (usuarioLogin != null && usuarioLogin.isEmailVerified()) {
 
-                            prepararAjustesUsuarioYEntrar(user.getUid());
+                            prepararAjustesUsuarioYEntrar(usuarioLogin.getUid());
 
                         } else {
 
@@ -79,10 +100,12 @@ public class LoginActivity extends BaseActivity {
                                     Toast.LENGTH_LONG).show();
 
                             auth.signOut();
+                            entradaMainEnCurso = false;
                         }
 
                     })
                     .addOnFailureListener(e -> {
+                        entradaMainEnCurso = false;
                         e.printStackTrace();
                         Toast.makeText(this, "Error " + e.getMessage(), Toast.LENGTH_LONG).show();
                     });
@@ -131,6 +154,7 @@ public class LoginActivity extends BaseActivity {
                     return true;
                 }
             }
+
             return false;
         });
     }
@@ -139,14 +163,22 @@ public class LoginActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
 
-        FirebaseUser user = auth.getCurrentUser();
+        // Ya no redirigimos desde onStart para evitar dobles cargas.
+        FirebaseUser user = auth != null ? auth.getCurrentUser() : null;
 
-        if (user != null && user.isEmailVerified()) {
-            prepararAjustesUsuarioYEntrar(user.getUid());
+        if (user == null) {
+            entradaMainEnCurso = false;
         }
     }
 
     private void prepararAjustesUsuarioYEntrar(String uid) {
+
+        if (entradaMainEnCurso) {
+            return;
+        }
+
+        entradaMainEnCurso = true;
+
         FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(uid)
@@ -172,6 +204,7 @@ public class LoginActivity extends BaseActivity {
                                 .putBoolean("notificaciones", notificaciones)
                                 .putBoolean("recordatorios", recordatorios)
                                 .putString("idioma", idioma)
+                                .putBoolean("permiso_notificaciones_preguntado", false)
                                 .apply();
 
                         entrarAlMain();
@@ -195,6 +228,7 @@ public class LoginActivity extends BaseActivity {
                 .putBoolean("notificaciones", false)
                 .putBoolean("recordatorios", false)
                 .putString("idioma", "es")
+                .putBoolean("permiso_notificaciones_preguntado", false)
                 .apply();
 
         HashMap<String, Object> data = new HashMap<>();
@@ -220,24 +254,18 @@ public class LoginActivity extends BaseActivity {
                 .putBoolean("notificaciones", false)
                 .putBoolean("recordatorios", false)
                 .putString("idioma", "es")
+                .putBoolean("permiso_notificaciones_preguntado", false)
                 .apply();
     }
 
     private void entrarAlMain() {
-        SharedPreferences prefs = getSharedPreferences(PREFS_AJUSTES, MODE_PRIVATE);
-        boolean modoOscuro = prefs.getBoolean("modo_oscuro", false);
-
-        AppCompatDelegate.setDefaultNightMode(
-                modoOscuro ? AppCompatDelegate.MODE_NIGHT_YES
-                        : AppCompatDelegate.MODE_NIGHT_NO
-        );
-
         Intent i = new Intent(this, MainActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(i);
+        finish();
     }
 
-    private void aplicarIdiomaYModoOscuro() {
+    private void aplicarIdioma() {
 
         SharedPreferences prefs = getSharedPreferences(PREFS_AJUSTES, MODE_PRIVATE);
 
@@ -250,11 +278,5 @@ public class LoginActivity extends BaseActivity {
         config.setLocale(locale);
         getResources().updateConfiguration(config, getResources().getDisplayMetrics());
 
-        boolean modoOscuro = prefs.getBoolean("modo_oscuro", false);
-
-        AppCompatDelegate.setDefaultNightMode(
-                modoOscuro ? AppCompatDelegate.MODE_NIGHT_YES
-                        : AppCompatDelegate.MODE_NIGHT_NO
-        );
     }
 }
