@@ -43,7 +43,6 @@ public class AjustesActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ajustes);
 
-
         switchNotificaciones = findViewById(R.id.switchNotificaciones);
         switchModoOscuro = findViewById(R.id.switchModoOscuro);
         switchRecordatorios = findViewById(R.id.switchRecordatorios);
@@ -55,6 +54,13 @@ public class AjustesActivity extends BaseActivity {
 
         cargarAjustesDesdePreferencias();
 
+        btnEspaniol.setOnClickListener(v -> seleccionarIdioma("es"));
+        btnIngles.setOnClickListener(v -> seleccionarIdioma("en"));
+
+        cargarAjustesDesdeFirebase();
+    }
+
+    private void configurarListenersSwitches() {
         switchModoOscuro.setOnCheckedChangeListener((buttonView, isChecked) -> {
             actualizarPreferencias("modo_oscuro", isChecked);
             AppCompatDelegate.setDefaultNightMode(
@@ -73,20 +79,19 @@ public class AjustesActivity extends BaseActivity {
             actualizarPreferencias("recordatorios", isChecked);
             aplicarPoliticaRecordatorios();
         });
+    }
 
-
-        btnEspaniol.setOnClickListener(v -> seleccionarIdioma("es"));
-        btnIngles.setOnClickListener(v -> seleccionarIdioma("en"));
-
-
-        cargarAjustesDesdeFirebase();
+    private void quitarListenersSwitches() {
+        switchModoOscuro.setOnCheckedChangeListener(null);
+        switchNotificaciones.setOnCheckedChangeListener(null);
+        switchRecordatorios.setOnCheckedChangeListener(null);
     }
 
     private void seleccionarIdioma(String idioma) {
         SharedPreferences prefs = getSharedPreferences(PREFS_AJUSTES, MODE_PRIVATE);
         prefs.edit().putString("idioma", idioma).apply();
-        guardarAjustesEnFirebase();
 
+        guardarAjustesEnFirebase();
 
         btnEspaniol.setAlpha(1f);
         btnIngles.setAlpha(1f);
@@ -94,41 +99,22 @@ public class AjustesActivity extends BaseActivity {
         recreate();
     }
 
-
     private void cargarAjustesDesdePreferencias() {
         SharedPreferences prefs = getSharedPreferences(PREFS_AJUSTES, MODE_PRIVATE);
 
-        switchModoOscuro.setOnCheckedChangeListener(null);
-        switchNotificaciones.setOnCheckedChangeListener(null);
-        switchRecordatorios.setOnCheckedChangeListener(null);
+        quitarListenersSwitches();
 
         switchModoOscuro.setChecked(prefs.getBoolean("modo_oscuro", false));
-        switchNotificaciones.setChecked(prefs.getBoolean("notificaciones", true));
+        switchNotificaciones.setChecked(prefs.getBoolean("notificaciones", false));
         switchRecordatorios.setChecked(prefs.getBoolean("recordatorios", false));
 
-        switchModoOscuro.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            actualizarPreferencias("modo_oscuro", isChecked);
-            AppCompatDelegate.setDefaultNightMode(
-                    isChecked ? AppCompatDelegate.MODE_NIGHT_YES
-                            : AppCompatDelegate.MODE_NIGHT_NO
-            );
-            recreate();
-        });
-
-        switchNotificaciones.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            actualizarPreferencias("notificaciones", isChecked);
-            aplicarPoliticaRecordatorios();
-        });
-
-        switchRecordatorios.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            actualizarPreferencias("recordatorios", isChecked);
-            aplicarPoliticaRecordatorios();
-        });
+        configurarListenersSwitches();
     }
 
     private void actualizarPreferencias(String key, boolean valor) {
         SharedPreferences prefs = getSharedPreferences(PREFS_AJUSTES, MODE_PRIVATE);
         prefs.edit().putBoolean(key, valor).apply();
+
         guardarAjustesEnFirebase();
     }
 
@@ -161,10 +147,13 @@ public class AjustesActivity extends BaseActivity {
                 .document("configuracion")
                 .get()
                 .addOnSuccessListener(document -> {
+
                     if (document.exists()) {
-                        boolean modoOscuro = document.getBoolean("modoOscuro") != null && Boolean.TRUE.equals(document.getBoolean("modoOscuro"));
-                        boolean notificaciones = document.getBoolean("notificaciones") == null || Boolean.TRUE.equals(document.getBoolean("notificaciones"));
-                        boolean recordatorios = document.getBoolean("recordatorios") != null && Boolean.TRUE.equals(document.getBoolean("recordatorios"));
+
+                        boolean modoOscuro = Boolean.TRUE.equals(document.getBoolean("modoOscuro"));
+                        boolean notificaciones = Boolean.TRUE.equals(document.getBoolean("notificaciones"));
+                        boolean recordatorios = Boolean.TRUE.equals(document.getBoolean("recordatorios"));
+
                         String idioma = document.getString("idioma") != null
                                 ? document.getString("idioma")
                                 : "es";
@@ -176,46 +165,73 @@ public class AjustesActivity extends BaseActivity {
                                 .putString("idioma", idioma)
                                 .apply();
 
-                        switchModoOscuro.setOnCheckedChangeListener(null);
-                        switchNotificaciones.setOnCheckedChangeListener(null);
-                        switchRecordatorios.setOnCheckedChangeListener(null);
+                        quitarListenersSwitches();
 
                         switchModoOscuro.setChecked(modoOscuro);
                         switchNotificaciones.setChecked(notificaciones);
                         switchRecordatorios.setChecked(recordatorios);
 
-                        switchModoOscuro.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                            actualizarPreferencias("modo_oscuro", isChecked);
-                            AppCompatDelegate.setDefaultNightMode(
-                                    isChecked ? AppCompatDelegate.MODE_NIGHT_YES
-                                            : AppCompatDelegate.MODE_NIGHT_NO
-                            );
-                            recreate();
-                        });
+                        configurarListenersSwitches();
 
-                        switchNotificaciones.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                            actualizarPreferencias("notificaciones", isChecked);
-                            aplicarPoliticaRecordatorios();
-                        });
+                        AppCompatDelegate.setDefaultNightMode(
+                                modoOscuro ? AppCompatDelegate.MODE_NIGHT_YES
+                                        : AppCompatDelegate.MODE_NIGHT_NO
+                        );
 
-                        switchRecordatorios.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                            actualizarPreferencias("recordatorios", isChecked);
-                            aplicarPoliticaRecordatorios();
-                        });
-
-                        assert idioma != null;
                         btnEspaniol.setAlpha(1f);
                         btnIngles.setAlpha(1f);
+
+                        aplicarPoliticaRecordatorios();
+
+                    } else {
+
+                        guardarAjustesInicialesDesactivados(uid);
                     }
                 })
                 .addOnFailureListener(Throwable::printStackTrace);
     }
 
+    private void guardarAjustesInicialesDesactivados(String uid) {
+        SharedPreferences prefs = getSharedPreferences(PREFS_AJUSTES, MODE_PRIVATE);
+
+        prefs.edit()
+                .putBoolean("modo_oscuro", false)
+                .putBoolean("notificaciones", false)
+                .putBoolean("recordatorios", false)
+                .putString("idioma", "es")
+                .apply();
+
+        quitarListenersSwitches();
+
+        switchModoOscuro.setChecked(false);
+        switchNotificaciones.setChecked(false);
+        switchRecordatorios.setChecked(false);
+
+        configurarListenersSwitches();
+
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("modoOscuro", false);
+        data.put("notificaciones", false);
+        data.put("recordatorios", false);
+        data.put("idioma", "es");
+
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(uid)
+                .collection("ajustes")
+                .document("configuracion")
+                .set(data);
+
+        cancelarRecordatorio();
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+    }
 
     private void aplicarPoliticaRecordatorios() {
         SharedPreferences prefs = getSharedPreferences(PREFS_AJUSTES, MODE_PRIVATE);
+
         boolean recordatorios = prefs.getBoolean("recordatorios", false);
-        boolean notificaciones = prefs.getBoolean("notificaciones", true);
+        boolean notificaciones = prefs.getBoolean("notificaciones", false);
 
         if (!recordatorios || !notificaciones) {
             cancelarRecordatorio();
@@ -244,16 +260,25 @@ public class AjustesActivity extends BaseActivity {
             boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
             if (granted) {
+
                 programarRecordatorio();
                 Toast.makeText(this, "Permiso de notificaciones concedido ✅", Toast.LENGTH_SHORT).show();
+
             } else {
+
                 prefs.edit()
                         .putBoolean("notificaciones", false)
                         .putBoolean("recordatorios", false)
                         .apply();
 
+                quitarListenersSwitches();
+
                 switchNotificaciones.setChecked(false);
                 switchRecordatorios.setChecked(false);
+
+                configurarListenersSwitches();
+
+                guardarAjustesEnFirebase();
 
                 cancelarRecordatorio();
 

@@ -14,8 +14,11 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.HashMap;
 import java.util.Locale;
+
 import android.content.res.Configuration;
 import android.view.MotionEvent;
 import android.graphics.drawable.Drawable;
@@ -29,6 +32,8 @@ public class LoginActivity extends BaseActivity {
     private FirebaseAuth auth;
 
     private boolean isPasswordVisible = false;
+
+    private static final String PREFS_AJUSTES = "Ajustes";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +70,7 @@ public class LoginActivity extends BaseActivity {
 
                         if (user != null && user.isEmailVerified()) {
 
-                            Intent i = new Intent(this, MainActivity.class);
-                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(i);
+                            prepararAjustesUsuarioYEntrar(user.getUid());
 
                         } else {
 
@@ -139,15 +142,104 @@ public class LoginActivity extends BaseActivity {
         FirebaseUser user = auth.getCurrentUser();
 
         if (user != null && user.isEmailVerified()) {
-            Intent i = new Intent(this, MainActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(i);
+            prepararAjustesUsuarioYEntrar(user.getUid());
         }
+    }
+
+    private void prepararAjustesUsuarioYEntrar(String uid) {
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(uid)
+                .collection("ajustes")
+                .document("configuracion")
+                .get()
+                .addOnSuccessListener(document -> {
+
+                    if (document.exists()) {
+
+                        boolean modoOscuro = Boolean.TRUE.equals(document.getBoolean("modoOscuro"));
+                        boolean notificaciones = Boolean.TRUE.equals(document.getBoolean("notificaciones"));
+                        boolean recordatorios = Boolean.TRUE.equals(document.getBoolean("recordatorios"));
+
+                        String idioma = document.getString("idioma") != null
+                                ? document.getString("idioma")
+                                : "es";
+
+                        SharedPreferences prefs = getSharedPreferences(PREFS_AJUSTES, MODE_PRIVATE);
+
+                        prefs.edit()
+                                .putBoolean("modo_oscuro", modoOscuro)
+                                .putBoolean("notificaciones", notificaciones)
+                                .putBoolean("recordatorios", recordatorios)
+                                .putString("idioma", idioma)
+                                .apply();
+
+                        entrarAlMain();
+
+                    } else {
+
+                        guardarAjustesInicialesDesactivados(uid);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    aplicarAjustesLocalesDesactivados();
+                    entrarAlMain();
+                });
+    }
+
+    private void guardarAjustesInicialesDesactivados(String uid) {
+        SharedPreferences prefs = getSharedPreferences(PREFS_AJUSTES, MODE_PRIVATE);
+
+        prefs.edit()
+                .putBoolean("modo_oscuro", false)
+                .putBoolean("notificaciones", false)
+                .putBoolean("recordatorios", false)
+                .putString("idioma", "es")
+                .apply();
+
+        HashMap<String, Object> data = new HashMap<>();
+        data.put("modoOscuro", false);
+        data.put("notificaciones", false);
+        data.put("recordatorios", false);
+        data.put("idioma", "es");
+
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(uid)
+                .collection("ajustes")
+                .document("configuracion")
+                .set(data)
+                .addOnCompleteListener(task -> entrarAlMain());
+    }
+
+    private void aplicarAjustesLocalesDesactivados() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_AJUSTES, MODE_PRIVATE);
+
+        prefs.edit()
+                .putBoolean("modo_oscuro", false)
+                .putBoolean("notificaciones", false)
+                .putBoolean("recordatorios", false)
+                .putString("idioma", "es")
+                .apply();
+    }
+
+    private void entrarAlMain() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_AJUSTES, MODE_PRIVATE);
+        boolean modoOscuro = prefs.getBoolean("modo_oscuro", false);
+
+        AppCompatDelegate.setDefaultNightMode(
+                modoOscuro ? AppCompatDelegate.MODE_NIGHT_YES
+                        : AppCompatDelegate.MODE_NIGHT_NO
+        );
+
+        Intent i = new Intent(this, MainActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(i);
     }
 
     private void aplicarIdiomaYModoOscuro() {
 
-        SharedPreferences prefs = getSharedPreferences("Ajustes", MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences(PREFS_AJUSTES, MODE_PRIVATE);
 
         String idioma = prefs.getString("idioma", "es");
 
