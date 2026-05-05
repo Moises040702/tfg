@@ -36,6 +36,22 @@
             android:inputType="time" />
 
         <EditText
+            android:id="@+id/editSeriesObjetivoRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="Series objetivo"
+            android:inputType="number" />
+
+        <EditText
+            android:id="@+id/editRepsObjetivoRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="Repeticiones objetivo"
+            android:inputType="number" />
+
+        <EditText
             android:id="@+id/editSeriesRealizadas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:hint="@string/repeticiones_por_serie"
-            android:inputType="text" />
+            android:inputType="number" />
 
         <EditText
             android:id="@+id/editPesoUtilizado"

@@ -84,6 +84,8 @@
     <string name="series_realizadas">Sets completed</string>
     <string name="repeticiones_por_serie">Repetitions per set</string>
     <string name="peso_utilizado">Weight used (kg)</string>
+    <string name="series_objetivo">Target sets</string>
+    <string name="repeticiones_objetivo">Target repetitions</string>
 
     <!-- Categorías -->
     <string name="biceps">Biceps</string>

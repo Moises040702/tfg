@@ -84,6 +84,8 @@
     <string name="series_realizadas">Series realizadas</string>
     <string name="repeticiones_por_serie">Repeticiones por serie</string>
     <string name="peso_utilizado">Peso utilizado (kg)</string>
+    <string name="series_objetivo">Series objetivo</string>
+    <string name="repeticiones_objetivo">Repeticiones objetivo</string>
 
     <!-- Categorías rutinas -->
     <string name="biceps">Bíceps</string>

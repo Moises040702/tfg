@@ -25,13 +25,18 @@ public class Rutina {
         this.ejercicios = new ArrayList<>(ejercicios);
         this.completada = false;
     }
+
     public String getId() { return id; }
+
     public String getNombre() { return nombre; }
+
     public String getObjetivo() { return objetivo; }
-    public String getVideoUrl(){
+
+    public String getVideoUrl() {
         return videoUrl;
     }
 
+    public List<String> getEjercicios() { return ejercicios; }
 
     @Override
     public String toString() {

@@ -26,6 +26,8 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DetalleRutinaActivity extends BaseActivity {
 
@@ -103,7 +105,7 @@ public class DetalleRutinaActivity extends BaseActivity {
                         "chest",
                         "Intermedio",
                         "android.resource://" + getPackageName() + "/" + R.raw.press_banca,
-                        Arrays.asList("4x10")
+                        new ArrayList<>()
                 ));
 
                 lista.add(new Rutina(
@@ -111,7 +113,7 @@ public class DetalleRutinaActivity extends BaseActivity {
                         "chest",
                         "Intermedio",
                         "android.resource://" + getPackageName() + "/" + R.raw.aberturas,
-                        Arrays.asList("3x10")
+                        new ArrayList<>()
                 ));
                 break;
 
@@ -121,7 +123,7 @@ public class DetalleRutinaActivity extends BaseActivity {
                         "biceps",
                         "Principiante",
                         "android.resource://" + getPackageName() + "/" + R.raw.curl_barra,
-                        Arrays.asList("3x12")
+                        new ArrayList<>()
                 ));
 
                 lista.add(new Rutina(
@@ -129,7 +131,7 @@ public class DetalleRutinaActivity extends BaseActivity {
                         "biceps",
                         "Intermedio",
                         "android.resource://" + getPackageName() + "/" + R.raw.curl_martillo,
-                        Arrays.asList("3x10")
+                        new ArrayList<>()
                 ));
                 break;
 
@@ -139,7 +141,7 @@ public class DetalleRutinaActivity extends BaseActivity {
                         "back",
                         "Avanzado",
                         "android.resource://" + getPackageName() + "/" + R.raw.dominadas,
-                        Arrays.asList("4x8")
+                        new ArrayList<>()
                 ));
 
                 lista.add(new Rutina(
@@ -147,7 +149,7 @@ public class DetalleRutinaActivity extends BaseActivity {
                         "back",
                         "Intermedio",
                         "android.resource://" + getPackageName() + "/" + R.raw.remounimancuerna,
-                        Arrays.asList("4x10")
+                        new ArrayList<>()
                 ));
                 break;
 
@@ -157,7 +159,7 @@ public class DetalleRutinaActivity extends BaseActivity {
                         "legs",
                         "Intermedio",
                         "android.resource://" + getPackageName() + "/" + R.raw.sentadilla_hack,
-                        Arrays.asList("4x10")
+                        new ArrayList<>()
                 ));
 
                 lista.add(new Rutina(
@@ -165,7 +167,7 @@ public class DetalleRutinaActivity extends BaseActivity {
                         "legs",
                         "Intermedio",
                         "android.resource://" + getPackageName() + "/" + R.raw.zancadas,
-                        Arrays.asList("3x12")
+                        new ArrayList<>()
                 ));
                 break;
 
@@ -175,7 +177,7 @@ public class DetalleRutinaActivity extends BaseActivity {
                         "shoulders",
                         "Intermedio",
                         "android.resource://" + getPackageName() + "/" + R.raw.press_militar,
-                        Arrays.asList("3x10")
+                        new ArrayList<>()
                 ));
 
                 lista.add(new Rutina(
@@ -183,7 +185,7 @@ public class DetalleRutinaActivity extends BaseActivity {
                         "shoulders",
                         "Intermedio",
                         "android.resource://" + getPackageName() + "/" + R.raw.elevaciones_laterales,
-                        Arrays.asList("3x12")
+                        new ArrayList<>()
                 ));
                 break;
 
@@ -193,7 +195,7 @@ public class DetalleRutinaActivity extends BaseActivity {
                         "abs",
                         "Principiante",
                         "android.resource://" + getPackageName() + "/" + R.raw.crunch_polea,
-                        Arrays.asList("3x15")
+                        new ArrayList<>()
                 ));
                 break;
         }
@@ -207,34 +209,41 @@ public class DetalleRutinaActivity extends BaseActivity {
 
         EditText editNombre = vista.findViewById(R.id.editNombreEjercicio);
 
-        new AlertDialog.Builder(this)
+        AlertDialog dialogo = new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.añadir_ejercicio))
                 .setView(vista)
-                .setPositiveButton(getString(R.string.añadir), (dialog, which) -> {
-
-                    String nombre = editNombre.getText().toString().trim();
-
-                    if (nombre.isEmpty()) {
-                        Toast.makeText(this, getString(R.string.introduce_nombre), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    Rutina nueva = new Rutina(
-                            nombre,
-                            codigoCategoria,
-                            "Personalizada",
-                            "",
-                            Collections.singletonList(getString(R.string.añadido_manual))
-                    );
-
-                    listaRutinasActual.add(nueva);
-                    adaptador.notifyItemInserted(listaRutinasActual.size() - 1);
-
-                    guardarRutinasEnPrefs(codigoCategoria, listaRutinasActual);
-                    guardarRutinasEnFirebase(codigoCategoria, listaRutinasActual);
-                })
+                .setPositiveButton(getString(R.string.añadir), null)
                 .setNegativeButton(getString(R.string.cancelar), null)
-                .show();
+                .create();
+
+        dialogo.setOnShowListener(dialog -> dialogo.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+
+            String nombre = editNombre.getText().toString().trim();
+
+            if (nombre.isEmpty()) {
+                Toast.makeText(this, getString(R.string.introduce_nombre), Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Rutina nueva = new Rutina(
+                    nombre,
+                    codigoCategoria,
+                    "Personalizada",
+                    "",
+                    new ArrayList<>()
+            );
+
+            listaRutinasActual.add(nueva);
+            adaptador.notifyItemInserted(listaRutinasActual.size() - 1);
+
+            guardarRutinasEnPrefs(codigoCategoria, listaRutinasActual);
+            guardarRutinasEnFirebase(codigoCategoria, listaRutinasActual);
+
+            Toast.makeText(this, getString(R.string.ejercicio_anadido), Toast.LENGTH_SHORT).show();
+            dialogo.dismiss();
+        }));
+
+        dialogo.show();
     }
 
     private void mostrarDialogoEliminarRutina(int posicion) {
@@ -261,6 +270,10 @@ public class DetalleRutinaActivity extends BaseActivity {
         EditText editFecha = vista.findViewById(R.id.editFechaRealizacion);
         EditText editHoraInicio = vista.findViewById(R.id.editHoraInicio);
         EditText editHoraFin = vista.findViewById(R.id.editHoraFin);
+
+        EditText editSeriesObjetivo = vista.findViewById(R.id.editSeriesObjetivoRegistro);
+        EditText editRepsObjetivo = vista.findViewById(R.id.editRepsObjetivoRegistro);
+
         EditText editSeries = vista.findViewById(R.id.editSeriesRealizadas);
         EditText editReps = vista.findViewById(R.id.editRepsPorSerie);
         EditText editPeso = vista.findViewById(R.id.editPesoUtilizado);
@@ -270,6 +283,13 @@ public class DetalleRutinaActivity extends BaseActivity {
         editFecha.setText(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendario.getTime()));
         editHoraInicio.setText(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(calendario.getTime()));
         editHoraFin.setText(editHoraInicio.getText());
+
+        ObjetivoRutina objetivoGuardado = obtenerObjetivoRutina(rutina);
+
+        if (objetivoGuardado != null) {
+            editSeriesObjetivo.setText(String.valueOf(objetivoGuardado.series));
+            editRepsObjetivo.setText(String.valueOf(objetivoGuardado.repeticiones));
+        }
 
         editFecha.setFocusable(false);
         editFecha.setOnClickListener(v -> {
@@ -289,7 +309,9 @@ public class DetalleRutinaActivity extends BaseActivity {
                 .setView(vista)
                 .setPositiveButton(getString(R.string.guardar), (d, w) -> {
 
-                    if (TextUtils.isEmpty(editSeries.getText()) ||
+                    if (TextUtils.isEmpty(editSeriesObjetivo.getText()) ||
+                            TextUtils.isEmpty(editRepsObjetivo.getText()) ||
+                            TextUtils.isEmpty(editSeries.getText()) ||
                             TextUtils.isEmpty(editReps.getText()) ||
                             TextUtils.isEmpty(editPeso.getText())) {
 
@@ -297,14 +319,46 @@ public class DetalleRutinaActivity extends BaseActivity {
                         return;
                     }
 
+                    int seriesObjetivo;
+                    int repsObjetivo;
+                    int seriesRealizadas;
+                    int repsRealizadas;
+                    double pesoUtilizado;
+
+                    try {
+                        seriesObjetivo = Integer.parseInt(editSeriesObjetivo.getText().toString().trim());
+                        repsObjetivo = Integer.parseInt(editRepsObjetivo.getText().toString().trim());
+                        seriesRealizadas = Integer.parseInt(editSeries.getText().toString().trim());
+                        repsRealizadas = Integer.parseInt(editReps.getText().toString().trim());
+                        pesoUtilizado = Double.parseDouble(editPeso.getText().toString().trim().replace(",", "."));
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(this, getString(R.string.valor_invalido), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if (seriesObjetivo <= 0 || repsObjetivo <= 0 ||
+                            seriesRealizadas <= 0 || repsRealizadas <= 0) {
+                        Toast.makeText(this, getString(R.string.valor_invalido), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    guardarObjetivoEnRutina(rutina, seriesObjetivo, repsObjetivo);
+
                     RegistroRealizacionRutina registro = new RegistroRealizacionRutina(
                             rutina.getNombre(),
                             editFecha.getText().toString(),
                             editHoraInicio.getText().toString(),
                             editHoraFin.getText().toString(),
-                            Integer.parseInt(editSeries.getText().toString()),
-                            Integer.parseInt(editReps.getText().toString()),
-                            Double.parseDouble(editPeso.getText().toString())
+                            seriesRealizadas,
+                            repsRealizadas,
+                            pesoUtilizado
+                    );
+
+                    final int estadoProgreso = calcularEstadoProgreso(
+                            seriesObjetivo,
+                            repsObjetivo,
+                            seriesRealizadas,
+                            repsRealizadas
                     );
 
                     FireStoreManager.guardarRegistro(registro, new FireStoreManager.SaveCallback() {
@@ -314,7 +368,7 @@ public class DetalleRutinaActivity extends BaseActivity {
 
                             FireStoreManager.marcarDiaEntrenado(
                                     fechaEntrenamiento,
-                                    DiaCalendario.ESTADO_CUMPLIDO
+                                    estadoProgreso
                             );
 
                             Toast.makeText(DetalleRutinaActivity.this,
@@ -332,6 +386,87 @@ public class DetalleRutinaActivity extends BaseActivity {
                 })
                 .setNegativeButton(getString(R.string.cancelar), null)
                 .show();
+    }
+
+    private void guardarObjetivoEnRutina(Rutina rutina, int seriesObjetivo, int repsObjetivo) {
+        String objetivo = seriesObjetivo + "x" + repsObjetivo;
+
+        if (rutina.getEjercicios() == null) {
+            return;
+        }
+
+        rutina.getEjercicios().clear();
+        rutina.getEjercicios().add(objetivo);
+
+        guardarRutinasEnPrefs(codigoCategoria, listaRutinasActual);
+        guardarRutinasEnFirebase(codigoCategoria, listaRutinasActual);
+
+        adaptador.notifyDataSetChanged();
+    }
+
+    private int calcularEstadoProgreso(int seriesObjetivo, int repsObjetivo, int seriesRealizadas, int repsRealizadas) {
+        int repsTotalesObjetivo = seriesObjetivo * repsObjetivo;
+        int repsTotalesRealizadas = seriesRealizadas * repsRealizadas;
+
+        boolean cumpleSeries = seriesRealizadas >= seriesObjetivo;
+        boolean cumpleRepeticionesTotales = repsTotalesRealizadas >= repsTotalesObjetivo;
+
+        if (cumpleSeries && cumpleRepeticionesTotales) {
+            return DiaCalendario.ESTADO_CUMPLIDO;
+        }
+
+        return DiaCalendario.ESTADO_A_MEDIAS;
+    }
+
+    private int calcularEstadoProgreso(Rutina rutina, int seriesRealizadas, int repsRealizadas) {
+        ObjetivoRutina objetivo = obtenerObjetivoRutina(rutina);
+        if (objetivo == null) {
+            return DiaCalendario.ESTADO_CUMPLIDO;
+        }
+
+        int repsTotalesRealizadas = seriesRealizadas * repsRealizadas;
+        int repsTotalesObjetivo = objetivo.series * objetivo.repeticiones;
+
+        boolean cumpleSeries = seriesRealizadas >= objetivo.series;
+        boolean cumpleRepeticionesTotales = repsTotalesRealizadas >= repsTotalesObjetivo;
+
+        if (cumpleSeries && cumpleRepeticionesTotales) {
+            return DiaCalendario.ESTADO_CUMPLIDO;
+        }
+
+        return DiaCalendario.ESTADO_A_MEDIAS;
+    }
+
+    private ObjetivoRutina obtenerObjetivoRutina(Rutina rutina) {
+        if (rutina == null || rutina.getEjercicios() == null) return null;
+
+        Pattern patronObjetivo = Pattern.compile("(\\d+)\\s*[xX×]\\s*(\\d+)");
+
+        for (String ejercicio : rutina.getEjercicios()) {
+            if (ejercicio == null) continue;
+
+            Matcher matcher = patronObjetivo.matcher(ejercicio);
+            if (matcher.find()) {
+                int seriesObjetivo = Integer.parseInt(matcher.group(1));
+                int repsObjetivo = Integer.parseInt(matcher.group(2));
+
+                if (seriesObjetivo > 0 && repsObjetivo > 0) {
+                    return new ObjetivoRutina(seriesObjetivo, repsObjetivo);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static class ObjetivoRutina {
+        final int series;
+        final int repeticiones;
+
+        ObjetivoRutina(int series, int repeticiones) {
+            this.series = series;
+            this.repeticiones = repeticiones;
+        }
     }
 
     private List<Rutina> cargarRutinasDesdePrefs(String clave) {

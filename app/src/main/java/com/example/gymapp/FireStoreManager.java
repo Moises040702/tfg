@@ -85,14 +85,49 @@ public class FireStoreManager {
 
     public static void marcarDiaEntrenado(String fecha, int estado) {
         String uid = getUid();
+
+        db.collection("users")
+                .document(uid)
+                .collection("progreso")
+                .document(fecha)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    int estadoAGuardar = estado;
+                    Long estadoActual = doc.getLong("estado");
+
+                    if (estadoActual != null) {
+                        estadoAGuardar = resolverEstadoProgreso(estadoActual.intValue(), estado);
+                    }
+
+                    guardarEstadoDia(uid, fecha, estadoAGuardar);
+                })
+                .addOnFailureListener(e -> guardarEstadoDia(uid, fecha, estado));
+    }
+
+    private static void guardarEstadoDia(String uid, String fecha, int estado) {
         HashMap<String, Object> data = new HashMap<>();
         data.put("fecha", fecha);
         data.put("estado", estado);
+
         db.collection("users")
                 .document(uid)
                 .collection("progreso")
                 .document(fecha)
                 .set(data);
+    }
+
+    private static int resolverEstadoProgreso(int estadoActual, int estadoNuevo) {
+        if (estadoActual == DiaCalendario.ESTADO_CUMPLIDO ||
+                estadoNuevo == DiaCalendario.ESTADO_CUMPLIDO) {
+            return DiaCalendario.ESTADO_CUMPLIDO;
+        }
+
+        if (estadoActual == DiaCalendario.ESTADO_A_MEDIAS ||
+                estadoNuevo == DiaCalendario.ESTADO_A_MEDIAS) {
+            return DiaCalendario.ESTADO_A_MEDIAS;
+        }
+
+        return estadoNuevo;
     }
 
     public static void obtenerProgreso(ProgresoCallback callback) {
