@@ -27,22 +27,16 @@ public class RecuperarContraseñaActivity extends BaseActivity {
             String email = emailRecoverInput.getText().toString().trim();
 
             if (email.isEmpty()) {
-                Toast.makeText(RecuperarContraseñaActivity.this,
-                        "Por favor, introduce tu correo electrónico",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.toast_introduce_correo), Toast.LENGTH_SHORT).show();
             } else {
                 FirebaseAuth auth = FirebaseAuth.getInstance();
                 auth.sendPasswordResetEmail(email)
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-                                Toast.makeText(RecuperarContraseñaActivity.this,
-                                        "Se ha enviado un enlace de recuperación a " + email,
-                                        Toast.LENGTH_LONG).show();
+                                Toast.makeText(this, getString(R.string.toast_enlace_recuperacion_enviado), Toast.LENGTH_LONG).show();
                                 finish();
                             } else {
-                                Toast.makeText(RecuperarContraseñaActivity.this,
-                                        "Error al enviar el correo: " + task.getException().getMessage(),
-                                        Toast.LENGTH_LONG).show();
+                                Toast.makeText(this, getString(R.string.toast_error_enviar_enlace), Toast.LENGTH_SHORT).show();
                             }
                         });
             }

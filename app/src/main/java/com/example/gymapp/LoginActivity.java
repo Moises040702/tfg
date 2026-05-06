@@ -3,6 +3,7 @@ package com.example.gymapp;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -31,8 +32,9 @@ public class LoginActivity extends BaseActivity {
     private boolean isPasswordVisible = false;
 
     private static final String PREFS_AJUSTES = "Ajustes";
+    private static final String PREFS_INSTALACION = "Instalacion";
+    private static final String KEY_INSTALL_TIME = "install_time";
 
-    // Evita abrir MainActivity dos veces en la misma ejecución de LoginActivity
     private boolean entradaMainEnCurso = false;
 
     @Override
@@ -44,16 +46,16 @@ public class LoginActivity extends BaseActivity {
 
         auth = FirebaseAuth.getInstance();
 
+        cerrarSesionSiEsNuevaInstalacion();
+
         FirebaseUser user = auth.getCurrentUser();
 
-        // Si ya hay sesión iniciada, NO pintamos la pantalla de login.
-        // Así evitamos que se vea login primero y luego MainActivity.
         if (user != null && user.isEmailVerified()) {
+            mostrarPantallaCarga();
             prepararAjustesUsuarioYEntrar(user.getUid());
             return;
         }
 
-        // Si hay usuario pero no está verificado, cerramos sesión y mostramos login.
         if (user != null && !user.isEmailVerified()) {
             auth.signOut();
         }
@@ -76,13 +78,19 @@ public class LoginActivity extends BaseActivity {
             String password = passwordInput.getText().toString().trim();
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, getString(R.string.toast_completa_email_password), Toast.LENGTH_SHORT).show();
+                Toast.makeText(
+                        this,
+                        getString(R.string.toast_completa_email_password),
+                        Toast.LENGTH_SHORT
+                ).show();
                 return;
             }
 
             if (entradaMainEnCurso) {
                 return;
             }
+
+            mostrarCargaEnBotonLogin(true);
 
             auth.signInWithEmailAndPassword(email, password)
                     .addOnSuccessListener(authResult -> {
@@ -95,21 +103,28 @@ public class LoginActivity extends BaseActivity {
 
                         } else {
 
-                            Toast.makeText(this,
+                            Toast.makeText(
+                                    this,
                                     getString(R.string.toast_verifica_email),
-                                    Toast.LENGTH_LONG).show();
+                                    Toast.LENGTH_LONG
+                            ).show();
 
                             auth.signOut();
                             entradaMainEnCurso = false;
+                            mostrarCargaEnBotonLogin(false);
                         }
 
                     })
                     .addOnFailureListener(e -> {
                         entradaMainEnCurso = false;
+                        mostrarCargaEnBotonLogin(false);
                         e.printStackTrace();
-                        Toast.makeText(this,
+
+                        Toast.makeText(
+                                this,
                                 getString(R.string.toast_error_con_mensaje, e.getMessage()),
-                                Toast.LENGTH_LONG).show();
+                                Toast.LENGTH_LONG
+                        ).show();
                     });
         });
 
@@ -165,11 +180,26 @@ public class LoginActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
 
-        // Ya no redirigimos desde onStart para evitar dobles cargas.
         FirebaseUser user = auth != null ? auth.getCurrentUser() : null;
 
         if (user == null) {
             entradaMainEnCurso = false;
+        }
+    }
+
+    private void mostrarPantallaCarga() {
+        setContentView(R.layout.activity_loading);
+    }
+
+    private void mostrarCargaEnBotonLogin(boolean cargando) {
+        if (loginButton == null) return;
+
+        loginButton.setEnabled(!cargando);
+
+        if (cargando) {
+            loginButton.setText(getString(R.string.cargando_datos));
+        } else {
+            loginButton.setText(getString(R.string.login));
         }
     }
 
@@ -279,6 +309,34 @@ public class LoginActivity extends BaseActivity {
         Configuration config = getResources().getConfiguration();
         config.setLocale(locale);
         getResources().updateConfiguration(config, getResources().getDisplayMetrics());
+    }
 
+    private void cerrarSesionSiEsNuevaInstalacion() {
+        try {
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            long installTimeActual = packageInfo.firstInstallTime;
+
+            SharedPreferences prefsInstalacion =
+                    getSharedPreferences(PREFS_INSTALACION, MODE_PRIVATE);
+
+            long installTimeGuardado = prefsInstalacion.getLong(KEY_INSTALL_TIME, -1);
+
+            if (installTimeGuardado != installTimeActual) {
+                FirebaseAuth.getInstance().signOut();
+
+                getSharedPreferences(PREFS_AJUSTES, MODE_PRIVATE)
+                        .edit()
+                        .clear()
+                        .apply();
+
+                prefsInstalacion.edit()
+                        .putLong(KEY_INSTALL_TIME, installTimeActual)
+                        .apply();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            FirebaseAuth.getInstance().signOut();
+        }
     }
 }

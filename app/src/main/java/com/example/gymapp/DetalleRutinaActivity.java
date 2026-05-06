@@ -1,6 +1,5 @@
 package com.example.gymapp;
 
-import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -25,14 +24,22 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DetalleRutinaActivity extends BaseActivity {
 
+    private RecyclerView recyclerRutinas;
     private RutinaAdapter adaptador;
+    private FloatingActionButton botonAgregar;
+    private ImageButton botonVolver;
 
     private String codigoCategoria;
     private List<Rutina> listaRutinasActual;
@@ -60,9 +67,9 @@ public class DetalleRutinaActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rutinas);
 
-        ImageButton botonVolver = findViewById(R.id.btnVolverRutinas);
-        RecyclerView recyclerRutinas = findViewById(R.id.recyclerViewRutinas);
-        FloatingActionButton botonAgregar = findViewById(R.id.btnAgregarRutina);
+        botonVolver = findViewById(R.id.btnVolverRutinas);
+        recyclerRutinas = findViewById(R.id.recyclerViewRutinas);
+        botonAgregar = findViewById(R.id.btnAgregarRutina);
 
         botonVolver.setOnClickListener(v -> onBackPressed());
 
@@ -214,34 +221,127 @@ public class DetalleRutinaActivity extends BaseActivity {
                 .setNegativeButton(getString(R.string.cancelar), null)
                 .create();
 
-        dialogo.setOnShowListener(dialog -> dialogo.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+        dialogo.setOnShowListener(dialog ->
+                dialogo.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
 
-            String nombre = editNombre.getText().toString().trim();
+                    String nombre = editNombre.getText().toString().trim();
 
-            if (nombre.isEmpty()) {
-                Toast.makeText(this, getString(R.string.introduce_nombre), Toast.LENGTH_SHORT).show();
-                return;
-            }
+                    if (nombre.isEmpty()) {
+                        Toast.makeText(
+                                this,
+                                getString(R.string.introduce_nombre),
+                                Toast.LENGTH_SHORT
+                        ).show();
+                        return;
+                    }
 
-            Rutina nueva = new Rutina(
-                    nombre,
-                    codigoCategoria,
-                    "Personalizada",
-                    "",
-                    new ArrayList<>()
-            );
+                    if (existeRutinaConNombre(nombre)) {
+                        Toast.makeText(
+                                this,
+                                getString(R.string.toast_ejercicio_ya_existe),
+                                Toast.LENGTH_SHORT
+                        ).show();
+                        return;
+                    }
 
-            listaRutinasActual.add(nueva);
-            adaptador.notifyItemInserted(listaRutinasActual.size() - 1);
+                    Rutina nueva = new Rutina(
+                            nombre,
+                            codigoCategoria,
+                            "Personalizada",
+                            "",
+                            new ArrayList<>()
+                    );
 
-            guardarRutinasEnPrefs(codigoCategoria, listaRutinasActual);
-            guardarRutinasEnFirebase(codigoCategoria, listaRutinasActual);
+                    listaRutinasActual.add(nueva);
+                    adaptador.notifyItemInserted(listaRutinasActual.size() - 1);
 
-            Toast.makeText(this, getString(R.string.ejercicio_anadido), Toast.LENGTH_SHORT).show();
-            dialogo.dismiss();
-        }));
+                    guardarRutinasEnPrefs(codigoCategoria, listaRutinasActual);
+                    guardarRutinasEnFirebase(codigoCategoria, listaRutinasActual);
+
+                    Toast.makeText(
+                            this,
+                            getString(R.string.ejercicio_anadido),
+                            Toast.LENGTH_SHORT
+                    ).show();
+
+                    dialogo.dismiss();
+                })
+        );
 
         dialogo.show();
+    }
+
+    private boolean existeRutinaConNombre(String nombreNuevo) {
+        String nuevoNormalizado = normalizarTexto(nombreNuevo);
+
+        for (Rutina rutina : listaRutinasActual) {
+            if (rutina == null || rutina.getNombre() == null) continue;
+
+            String nombreGuardado = rutina.getNombre();
+            String nombreVisible = obtenerNombreVisibleRutina(nombreGuardado);
+
+            if (normalizarTexto(nombreGuardado).equals(nuevoNormalizado) ||
+                    normalizarTexto(nombreVisible).equals(nuevoNormalizado)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private String normalizarTexto(String texto) {
+        if (texto == null) return "";
+
+        String resultado = texto.trim().toLowerCase(Locale.ROOT);
+
+        resultado = Normalizer.normalize(resultado, Normalizer.Form.NFD);
+        resultado = resultado.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+
+        return resultado;
+    }
+
+    private String obtenerNombreVisibleRutina(String codigoEjercicio) {
+        if (codigoEjercicio == null) {
+            return "";
+        }
+
+        switch (codigoEjercicio) {
+            case "curl_barra":
+                return getString(R.string.curl_barra);
+
+            case "curl_martillo":
+                return getString(R.string.curl_martillo);
+
+            case "press_banca":
+                return getString(R.string.press_banca);
+
+            case "press_inclinado":
+                return getString(R.string.press_inclinado);
+
+            case "dominadas":
+                return getString(R.string.dominadas);
+
+            case "remo_mancuerna":
+                return getString(R.string.remo_mancuerna);
+
+            case "sentadilla_hack":
+                return getString(R.string.sentadilla_hack);
+
+            case "zancadas":
+                return getString(R.string.zancadas);
+
+            case "press_militar":
+                return getString(R.string.press_militar);
+
+            case "elevaciones_laterales":
+                return getString(R.string.elevaciones_laterales);
+
+            case "crunch_polea":
+                return getString(R.string.crunch_polea);
+
+            default:
+                return codigoEjercicio;
+        }
     }
 
     private void mostrarDialogoEliminarRutina(int posicion) {
@@ -303,7 +403,7 @@ public class DetalleRutinaActivity extends BaseActivity {
         });
 
         new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.registrar_realizacion) + ": " + rutina.getNombre())
+                .setTitle(getString(R.string.registrar_realizacion) + ": " + obtenerNombreVisibleRutina(rutina.getNombre()))
                 .setView(vista)
                 .setPositiveButton(getString(R.string.guardar), (d, w) -> {
 
@@ -369,16 +469,20 @@ public class DetalleRutinaActivity extends BaseActivity {
                                     estadoProgreso
                             );
 
-                            Toast.makeText(DetalleRutinaActivity.this,
+                            Toast.makeText(
+                                    DetalleRutinaActivity.this,
                                     getString(R.string.sesion_guardada),
-                                    Toast.LENGTH_LONG).show();
+                                    Toast.LENGTH_LONG
+                            ).show();
                         }
 
                         @Override
                         public void onError(@NonNull Exception e) {
-                            Toast.makeText(DetalleRutinaActivity.this,
-                                    "Error: " + e.getMessage(),
-                                    Toast.LENGTH_LONG).show();
+                            Toast.makeText(
+                                    DetalleRutinaActivity.this,
+                                    getString(R.string.toast_error_con_mensaje, e.getMessage()),
+                                    Toast.LENGTH_LONG
+                            ).show();
                         }
                     });
                 })
@@ -386,7 +490,6 @@ public class DetalleRutinaActivity extends BaseActivity {
                 .show();
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private void guardarObjetivoEnRutina(Rutina rutina, int seriesObjetivo, int repsObjetivo) {
         String objetivo = seriesObjetivo + "x" + repsObjetivo;
 
@@ -427,8 +530,8 @@ public class DetalleRutinaActivity extends BaseActivity {
 
             Matcher matcher = patronObjetivo.matcher(ejercicio);
             if (matcher.find()) {
-                int seriesObjetivo = Integer.parseInt(Objects.requireNonNull(matcher.group(1)));
-                int repsObjetivo = Integer.parseInt(Objects.requireNonNull(matcher.group(2)));
+                int seriesObjetivo = Integer.parseInt(matcher.group(1));
+                int repsObjetivo = Integer.parseInt(matcher.group(2));
 
                 if (seriesObjetivo > 0 && repsObjetivo > 0) {
                     return new ObjetivoRutina(seriesObjetivo, repsObjetivo);
@@ -465,7 +568,7 @@ public class DetalleRutinaActivity extends BaseActivity {
     }
 
     private void guardarRutinasEnFirebase(String clave, List<Rutina> lista) {
-        String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         HashMap<String, Object> datos = new HashMap<>();
         datos.put("categoria", clave);

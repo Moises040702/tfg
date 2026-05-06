@@ -7,21 +7,31 @@ import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 public class VideoRutinaActivity extends BaseActivity implements TextureView.SurfaceTextureListener {
 
     private TextureView textureView;
+    private ImageButton btnVolver, btnPlayPause;
+    private SeekBar seekBarVideo;
+    private TextView tvTiempoVideo;
+    private Button btnRepetirVideo;
 
     private MediaPlayer mediaPlayer;
     private Surface surface;
@@ -34,6 +44,17 @@ public class VideoRutinaActivity extends BaseActivity implements TextureView.Sur
 
     private boolean videoPreparado = false;
     private boolean pausadoPorUsuario = false;
+    private boolean usuarioMoviendoBarra = false;
+
+    private final Handler handler = new Handler(Looper.getMainLooper());
+
+    private final Runnable actualizadorProgreso = new Runnable() {
+        @Override
+        public void run() {
+            actualizarProgresoVideo();
+            handler.postDelayed(this, 500);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +76,11 @@ public class VideoRutinaActivity extends BaseActivity implements TextureView.Sur
         setContentView(R.layout.activity_video_rutina);
 
         textureView = findViewById(R.id.videoViewRutina);
-        ImageButton btnVolver = findViewById(R.id.btnVolverVideo);
+        btnVolver = findViewById(R.id.btnVolverVideo);
+        btnPlayPause = findViewById(R.id.btnPlayPauseVideo);
+        seekBarVideo = findViewById(R.id.seekBarVideo);
+        tvTiempoVideo = findViewById(R.id.tvTiempoVideo);
+        btnRepetirVideo = findViewById(R.id.btnRepetirVideo);
 
         videoUrl = getIntent().getStringExtra("VIDEO_URL");
 
@@ -71,11 +96,16 @@ public class VideoRutinaActivity extends BaseActivity implements TextureView.Sur
         textureView.setSurfaceTextureListener(this);
 
         textureView.setOnClickListener(v -> alternarPlayPause());
+        btnPlayPause.setOnClickListener(v -> alternarPlayPause());
+
+        btnRepetirVideo.setOnClickListener(v -> repetirVideo());
 
         btnVolver.setOnClickListener(v -> {
             liberarMediaPlayer();
             finish();
         });
+
+        configurarSeekBar();
     }
 
     private void activarPantallaCompleta() {
@@ -143,21 +173,24 @@ public class VideoRutinaActivity extends BaseActivity implements TextureView.Sur
                 videoWidth = mp.getVideoWidth();
                 videoHeight = mp.getVideoHeight();
 
+                seekBarVideo.setMax(mp.getDuration());
+
                 ajustarVideoEquilibrado();
 
                 pausadoPorUsuario = false;
+                btnRepetirVideo.setVisibility(View.GONE);
+
                 mp.start();
+
+                actualizarIconoPlayPause();
+                iniciarActualizadorProgreso();
             });
 
             mediaPlayer.setOnCompletionListener(mp -> {
                 pausadoPorUsuario = true;
-
-                try {
-                    mp.seekTo(0);
-                    ajustarVideoEquilibrado();
-                } catch (Exception e) {
-                    Log.e("VIDEO_COMPLETION", "Error al reiniciar vídeo: " + e.getMessage());
-                }
+                btnRepetirVideo.setVisibility(View.VISIBLE);
+                actualizarIconoPlayPause();
+                actualizarProgresoVideo();
             });
 
             mediaPlayer.setOnErrorListener((mp, what, extra) -> {
@@ -174,6 +207,33 @@ public class VideoRutinaActivity extends BaseActivity implements TextureView.Sur
         }
     }
 
+    private void configurarSeekBar() {
+        seekBarVideo.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser && mediaPlayer != null && videoPreparado) {
+                    tvTiempoVideo.setText(
+                            formatearTiempo(progress) + " / " + formatearTiempo(mediaPlayer.getDuration())
+                    );
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                usuarioMoviendoBarra = true;
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if (mediaPlayer != null && videoPreparado) {
+                    mediaPlayer.seekTo(seekBar.getProgress());
+                }
+
+                usuarioMoviendoBarra = false;
+            }
+        });
+    }
+
     private void alternarPlayPause() {
         if (mediaPlayer == null || !videoPreparado) {
             return;
@@ -184,12 +244,83 @@ public class VideoRutinaActivity extends BaseActivity implements TextureView.Sur
                 mediaPlayer.pause();
                 pausadoPorUsuario = true;
             } else {
+                if (mediaPlayer.getCurrentPosition() >= mediaPlayer.getDuration() - 300) {
+                    mediaPlayer.seekTo(0);
+                    btnRepetirVideo.setVisibility(View.GONE);
+                }
+
                 mediaPlayer.start();
                 pausadoPorUsuario = false;
             }
+
+            actualizarIconoPlayPause();
+
         } catch (Exception e) {
             Log.e("VIDEO_PAUSE", "Error pausando/reanudando: " + e.getMessage());
         }
+    }
+
+    private void repetirVideo() {
+        if (mediaPlayer == null || !videoPreparado) return;
+
+        try {
+            mediaPlayer.seekTo(0);
+            mediaPlayer.start();
+            pausadoPorUsuario = false;
+            btnRepetirVideo.setVisibility(View.GONE);
+            actualizarIconoPlayPause();
+            iniciarActualizadorProgreso();
+        } catch (Exception e) {
+            Log.e("VIDEO_REPEAT", "Error repitiendo vídeo: " + e.getMessage());
+        }
+    }
+
+    private void actualizarIconoPlayPause() {
+        if (mediaPlayer != null && videoPreparado && mediaPlayer.isPlaying()) {
+            btnPlayPause.setImageResource(android.R.drawable.ic_media_pause);
+            btnPlayPause.setContentDescription(getString(R.string.pausar));
+        } else {
+            btnPlayPause.setImageResource(android.R.drawable.ic_media_play);
+            btnPlayPause.setContentDescription(getString(R.string.reproducir));
+        }
+    }
+
+    private void iniciarActualizadorProgreso() {
+        handler.removeCallbacks(actualizadorProgreso);
+        handler.post(actualizadorProgreso);
+    }
+
+    private void detenerActualizadorProgreso() {
+        handler.removeCallbacks(actualizadorProgreso);
+    }
+
+    private void actualizarProgresoVideo() {
+        if (mediaPlayer == null || !videoPreparado) return;
+
+        try {
+            int posicion = mediaPlayer.getCurrentPosition();
+            int duracion = mediaPlayer.getDuration();
+
+            if (!usuarioMoviendoBarra) {
+                seekBarVideo.setProgress(posicion);
+            }
+
+            tvTiempoVideo.setText(
+                    formatearTiempo(posicion) + " / " + formatearTiempo(duracion)
+            );
+
+            actualizarIconoPlayPause();
+
+        } catch (Exception ignored) {
+        }
+    }
+
+    private String formatearTiempo(int millis) {
+        int totalSeconds = millis / 1000;
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+
+        return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
     }
 
     private void ajustarVideoEquilibrado() {
@@ -214,6 +345,7 @@ public class VideoRutinaActivity extends BaseActivity implements TextureView.Sur
 
         float scaleX = 1f;
         float scaleY = 1f;
+
         float zoomSuave = 1.12f;
 
         if (viewRatio > videoRatio) {
@@ -288,6 +420,9 @@ public class VideoRutinaActivity extends BaseActivity implements TextureView.Sur
         if (mediaPlayer != null && videoPreparado && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
         }
+
+        actualizarIconoPlayPause();
+        detenerActualizadorProgreso();
     }
 
     @Override
@@ -299,10 +434,13 @@ public class VideoRutinaActivity extends BaseActivity implements TextureView.Sur
         if (mediaPlayer != null && videoPreparado && !pausadoPorUsuario) {
             try {
                 mediaPlayer.start();
+                iniciarActualizadorProgreso();
             } catch (Exception e) {
                 Log.e("VIDEO_RESUME", "Error reanudando vídeo: " + e.getMessage());
             }
         }
+
+        actualizarIconoPlayPause();
 
         if (textureView != null) {
             textureView.postDelayed(this::ajustarVideoEquilibrado, 100);
@@ -329,6 +467,8 @@ public class VideoRutinaActivity extends BaseActivity implements TextureView.Sur
     }
 
     private void liberarSoloMediaPlayer() {
+        detenerActualizadorProgreso();
+
         if (mediaPlayer != null) {
             try {
                 if (mediaPlayer.isPlaying()) {

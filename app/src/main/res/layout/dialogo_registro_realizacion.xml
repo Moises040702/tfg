@@ -14,9 +14,9 @@
             android:id="@+id/editFechaRealizacion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Fecha (yyyy-MM-dd)"
-            android:focusable="false"
             android:clickable="true"
+            android:focusable="false"
+            android:hint="Fecha (yyyy-MM-dd)"
             android:inputType="none" />
 
         <EditText
@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="Series objetivo"
+            android:hint="@string/series_objetivo"
             android:inputType="number" />
 
         <EditText
@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="Repeticiones objetivo"
+            android:hint="@string/repeticiones_objetivo"
             android:inputType="number" />
 
         <EditText
@@ -76,4 +76,5 @@
             android:inputType="numberDecimal" />
 
     </LinearLayout>
+
 </ScrollView>

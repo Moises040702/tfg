@@ -285,4 +285,27 @@
     <string name="toast_error_eliminar_datos">Error al eliminar datos</string>
     <string name="toast_error_cargando_pesos">Error cargando pesos</string>
 
+    <string name="cargando_datos">Cargando tus datos...</string>
+
+    <string name="eliminacion_cuenta_titulo">Eliminar cuenta</string>
+    <string name="eliminacion_cuenta_mensaje">Esta acción eliminará tu cuenta y tus datos. No se puede deshacer. Para confirmar, escribe: %1$s</string>
+    <string name="eliminacion_cuenta_confirmacion_hint">Escribe %1$s</string>
+    <string name="eliminar_definitivamente">Eliminar definitivamente</string>
+    <string name="palabra_confirmacion_eliminar">ELIMINAR</string>
+    <string name="toast_escribe_confirmacion_eliminar">Debes escribir la palabra de confirmación correctamente</string>
+
+    <string name="toast_fecha_invalida">La fecha de nacimiento no es válida</string>
+    <string name="toast_fecha_futura">La fecha de nacimiento no puede ser futura</string>
+    <string name="toast_dni_nie_invalido">DNI/NIE no válido</string>
+
+    <string name="toast_ejercicio_ya_existe">Ese ejercicio ya existe en esta categoría</string>
+
+    <string name="reproducir">Reproducir</string>
+    <string name="pausar">Pausar</string>
+    <string name="repetir_video">Repetir</string>
+
+    <string name="toast_introduce_correo">Introduce tu correo electrónico</string>
+    <string name="toast_enlace_recuperacion_enviado">Te hemos enviado un enlace de recuperación</string>
+    <string name="toast_error_enviar_enlace">No se pudo enviar el enlace de recuperación</string>
+
 </resources>
