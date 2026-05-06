@@ -36,11 +36,11 @@ public class RecordatorioWorker extends Worker {
     @Override
     public Result doWork() {
         Context context = getApplicationContext();
-        mostrarNotificacionSiToca(context, "WORKER");
+        mostrarNotificacionSiToca(context);
         return Result.success();
     }
 
-    public static void mostrarNotificacionSiToca(Context context, String origen) {
+    public static void mostrarNotificacionSiToca(Context context) {
         SharedPreferences ajustes = context.getSharedPreferences(PREFS_AJUSTES, Context.MODE_PRIVATE);
 
         boolean notificacionesActivadas = ajustes.getBoolean("notificaciones", true);
@@ -68,9 +68,7 @@ public class RecordatorioWorker extends Worker {
             return;
         }
 
-        if (android.os.Build.VERSION.SDK_INT >= 33 &&
-                ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                        != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
 
@@ -89,19 +87,17 @@ public class RecordatorioWorker extends Worker {
     }
 
     private static void crearCanalNotificacion(Context context) {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    CHANNEL_ID,
-                    "Recordatorios Rutinas",
-                    NotificationManager.IMPORTANCE_DEFAULT
-            );
-            channel.setDescription("Canal para recordatorios de rutinas no hechas");
-            channel.enableLights(true);
-            channel.setLightColor(Color.RED);
-            channel.enableVibration(true);
+        NotificationChannel channel = new NotificationChannel(
+                CHANNEL_ID,
+                "Recordatorios Rutinas",
+                NotificationManager.IMPORTANCE_DEFAULT
+        );
+        channel.setDescription("Canal para recordatorios de rutinas no hechas");
+        channel.enableLights(true);
+        channel.setLightColor(Color.RED);
+        channel.enableVibration(true);
 
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            if (notificationManager != null) notificationManager.createNotificationChannel(channel);
-        }
+        NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        if (notificationManager != null) notificationManager.createNotificationChannel(channel);
     }
 }

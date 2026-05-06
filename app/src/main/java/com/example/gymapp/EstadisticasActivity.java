@@ -1,6 +1,6 @@
 package com.example.gymapp;
 
-import android.content.SharedPreferences;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -17,15 +17,10 @@ public class EstadisticasActivity extends BaseActivity {
     private TextView tvMesSeries, tvMesReps, tvMesVolumen, tvMesSesiones, tvMesTiempo;
     private TextView tvTotalSeries, tvTotalReps, tvTotalVolumen, tvTotalSesiones, tvTotalTiempo;
 
-    private String idiomaActual;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_estadisticas);
-
-        SharedPreferences prefs = getSharedPreferences("Ajustes", MODE_PRIVATE);
-        idiomaActual = prefs.getString("idioma", "es");
 
         ImageButton btnVolver = findViewById(R.id.btnVolverEstadisticas);
         btnVolver.setOnClickListener(v -> finish());
@@ -65,6 +60,7 @@ public class EstadisticasActivity extends BaseActivity {
 
         FireStoreManager.obtenerTodosLosRegistros(new FireStoreManager.ListCallback() {
 
+            @SuppressLint("SetTextI18n")
             @Override
             public void onSuccess(@NonNull List<RegistroRealizacionRutina> registros) {
 
@@ -197,7 +193,7 @@ public class EstadisticasActivity extends BaseActivity {
             c.set(Calendar.MONTH, Integer.parseInt(p[1]) - 1);
             c.set(Calendar.DAY_OF_MONTH, Integer.parseInt(p[2]));
 
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
 
         return c;
     }

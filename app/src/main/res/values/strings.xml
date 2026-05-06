@@ -253,4 +253,36 @@
         <item>Zaragoza</item>
     </string-array>
 
+    <string name="toast_completa_email_password">Completa email y contraseña</string>
+    <string name="toast_verifica_email">Debes verificar tu email antes de iniciar sesión</string>
+    <string name="toast_error_con_mensaje">Error: %1$s</string>
+
+    <string name="toast_video_no_cargado">No se pudo cargar el vídeo</string>
+    <string name="toast_error_reproducir_video">Error al reproducir el vídeo</string>
+    <string name="toast_video_no_reproducir">No se pudo reproducir el vídeo</string>
+
+    <string name="toast_permiso_notificaciones_concedido">Permiso de notificaciones concedido ✅</string>
+    <string name="toast_permiso_notificaciones_denegado">Permiso de notificaciones denegado ❌</string>
+
+    <string name="dialog_permiso_bloqueado_titulo">Permiso bloqueado</string>
+    <string name="dialog_permiso_bloqueado_mensaje">Has bloqueado las notificaciones. Actívalas desde Ajustes para que los recordatorios funcionen.</string>
+
+    <string name="dialog_notificaciones_bloqueadas_titulo">Notificaciones bloqueadas</string>
+    <string name="dialog_notificaciones_bloqueadas_mensaje">Para recibir recordatorios, activa las notificaciones desde Ajustes del sistema.</string>
+
+    <string name="ir_a_ajustes">Ir a Ajustes</string>
+
+    <string name="toast_error_cargando_datos">Error cargando datos</string>
+    <string name="toast_usuario_nombre_apellidos_obligatorios">Rellena al menos nombre y apellidos</string>
+    <string name="toast_dni_invalido">DNI debe ser 8 números y 1 letra</string>
+    <string name="toast_telefono_invalido">El teléfono debe tener 9 cifras</string>
+    <string name="toast_datos_actualizados">Datos actualizados</string>
+    <string name="toast_error_guardar_datos">Error al guardar</string>
+    <string name="toast_correo_cambio_contrasena_enviado">Correo enviado para cambiar contraseña</string>
+    <string name="toast_error_enviar_correo">Error al enviar correo</string>
+    <string name="toast_cuenta_eliminada">Cuenta eliminada</string>
+    <string name="toast_error_eliminar_cuenta">Error al eliminar cuenta</string>
+    <string name="toast_error_eliminar_datos">Error al eliminar datos</string>
+    <string name="toast_error_cargando_pesos">Error cargando pesos</string>
+
 </resources>

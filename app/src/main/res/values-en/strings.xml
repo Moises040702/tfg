@@ -253,4 +253,36 @@
         <item>Zaragoza</item>
     </string-array>
 
+    <string name="toast_completa_email_password">Enter your email and password</string>
+    <string name="toast_verifica_email">You must verify your email before logging in</string>
+    <string name="toast_error_con_mensaje">Error: %1$s</string>
+
+    <string name="toast_video_no_cargado">The video could not be loaded</string>
+    <string name="toast_error_reproducir_video">Error playing the video</string>
+    <string name="toast_video_no_reproducir">The video could not be played</string>
+
+    <string name="toast_permiso_notificaciones_concedido">Notification permission granted ✅</string>
+    <string name="toast_permiso_notificaciones_denegado">Notification permission denied ❌</string>
+
+    <string name="dialog_permiso_bloqueado_titulo">Permission blocked</string>
+    <string name="dialog_permiso_bloqueado_mensaje">You have blocked notifications. Enable them from Settings so reminders can work.</string>
+
+    <string name="dialog_notificaciones_bloqueadas_titulo">Notifications blocked</string>
+    <string name="dialog_notificaciones_bloqueadas_mensaje">To receive reminders, enable notifications from the system settings.</string>
+
+    <string name="ir_a_ajustes">Go to Settings</string>
+
+    <string name="toast_error_cargando_datos">Error loading data</string>
+    <string name="toast_usuario_nombre_apellidos_obligatorios">Fill in at least first and last name</string>
+    <string name="toast_dni_invalido">ID must have 8 digits and 1 letter</string>
+    <string name="toast_telefono_invalido">Phone number must have 9 digits</string>
+    <string name="toast_datos_actualizados">Data updated</string>
+    <string name="toast_error_guardar_datos">Error saving data</string>
+    <string name="toast_correo_cambio_contrasena_enviado">Email sent to change your password</string>
+    <string name="toast_error_enviar_correo">Error sending email</string>
+    <string name="toast_cuenta_eliminada">Account deleted</string>
+    <string name="toast_error_eliminar_cuenta">Error deleting account</string>
+    <string name="toast_error_eliminar_datos">Error deleting data</string>
+    <string name="toast_error_cargando_pesos">Error loading weights</string>
+
 </resources>

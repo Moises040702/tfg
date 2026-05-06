@@ -1,6 +1,5 @@
 package com.example.gymapp;
 
-import android.annotation.SuppressLint;
 import android.content.res.Configuration;
 import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
@@ -23,7 +22,6 @@ import java.util.HashMap;
 public class VideoRutinaActivity extends BaseActivity implements TextureView.SurfaceTextureListener {
 
     private TextureView textureView;
-    private ImageButton btnVolver;
 
     private MediaPlayer mediaPlayer;
     private Surface surface;
@@ -57,13 +55,13 @@ public class VideoRutinaActivity extends BaseActivity implements TextureView.Sur
         setContentView(R.layout.activity_video_rutina);
 
         textureView = findViewById(R.id.videoViewRutina);
-        btnVolver = findViewById(R.id.btnVolverVideo);
+        ImageButton btnVolver = findViewById(R.id.btnVolverVideo);
 
         videoUrl = getIntent().getStringExtra("VIDEO_URL");
 
         if (videoUrl == null || videoUrl.trim().isEmpty()) {
             Log.e("VIDEO", "URL vacía");
-            Toast.makeText(this, "No se pudo cargar el vídeo", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_video_no_cargado), Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -164,7 +162,7 @@ public class VideoRutinaActivity extends BaseActivity implements TextureView.Sur
 
             mediaPlayer.setOnErrorListener((mp, what, extra) -> {
                 Log.e("VIDEO_ERROR", "Error MediaPlayer: " + what + " " + extra);
-                Toast.makeText(this, "Error al reproducir el vídeo", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.toast_error_reproducir_video), Toast.LENGTH_SHORT).show();
                 return true;
             });
 
@@ -172,7 +170,7 @@ public class VideoRutinaActivity extends BaseActivity implements TextureView.Sur
 
         } catch (Exception e) {
             Log.e("VIDEO_ERROR", "Error preparando vídeo: " + e.getMessage());
-            Toast.makeText(this, "No se pudo reproducir el vídeo", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.toast_video_no_reproducir), Toast.LENGTH_SHORT).show();
         }
     }
 

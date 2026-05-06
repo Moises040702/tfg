@@ -1,5 +1,6 @@
 package com.example.gymapp;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -31,10 +32,7 @@ import java.util.regex.Pattern;
 
 public class DetalleRutinaActivity extends BaseActivity {
 
-    private RecyclerView recyclerRutinas;
     private RutinaAdapter adaptador;
-    private FloatingActionButton botonAgregar;
-    private ImageButton botonVolver;
 
     private String codigoCategoria;
     private List<Rutina> listaRutinasActual;
@@ -62,9 +60,9 @@ public class DetalleRutinaActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rutinas);
 
-        botonVolver = findViewById(R.id.btnVolverRutinas);
-        recyclerRutinas = findViewById(R.id.recyclerViewRutinas);
-        botonAgregar = findViewById(R.id.btnAgregarRutina);
+        ImageButton botonVolver = findViewById(R.id.btnVolverRutinas);
+        RecyclerView recyclerRutinas = findViewById(R.id.recyclerViewRutinas);
+        FloatingActionButton botonAgregar = findViewById(R.id.btnAgregarRutina);
 
         botonVolver.setOnClickListener(v -> onBackPressed());
 
@@ -388,6 +386,7 @@ public class DetalleRutinaActivity extends BaseActivity {
                 .show();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void guardarObjetivoEnRutina(Rutina rutina, int seriesObjetivo, int repsObjetivo) {
         String objetivo = seriesObjetivo + "x" + repsObjetivo;
 
@@ -418,25 +417,6 @@ public class DetalleRutinaActivity extends BaseActivity {
         return DiaCalendario.ESTADO_A_MEDIAS;
     }
 
-    private int calcularEstadoProgreso(Rutina rutina, int seriesRealizadas, int repsRealizadas) {
-        ObjetivoRutina objetivo = obtenerObjetivoRutina(rutina);
-        if (objetivo == null) {
-            return DiaCalendario.ESTADO_CUMPLIDO;
-        }
-
-        int repsTotalesRealizadas = seriesRealizadas * repsRealizadas;
-        int repsTotalesObjetivo = objetivo.series * objetivo.repeticiones;
-
-        boolean cumpleSeries = seriesRealizadas >= objetivo.series;
-        boolean cumpleRepeticionesTotales = repsTotalesRealizadas >= repsTotalesObjetivo;
-
-        if (cumpleSeries && cumpleRepeticionesTotales) {
-            return DiaCalendario.ESTADO_CUMPLIDO;
-        }
-
-        return DiaCalendario.ESTADO_A_MEDIAS;
-    }
-
     private ObjetivoRutina obtenerObjetivoRutina(Rutina rutina) {
         if (rutina == null || rutina.getEjercicios() == null) return null;
 
@@ -447,8 +427,8 @@ public class DetalleRutinaActivity extends BaseActivity {
 
             Matcher matcher = patronObjetivo.matcher(ejercicio);
             if (matcher.find()) {
-                int seriesObjetivo = Integer.parseInt(matcher.group(1));
-                int repsObjetivo = Integer.parseInt(matcher.group(2));
+                int seriesObjetivo = Integer.parseInt(Objects.requireNonNull(matcher.group(1)));
+                int repsObjetivo = Integer.parseInt(Objects.requireNonNull(matcher.group(2)));
 
                 if (seriesObjetivo > 0 && repsObjetivo > 0) {
                     return new ObjetivoRutina(seriesObjetivo, repsObjetivo);
@@ -485,7 +465,7 @@ public class DetalleRutinaActivity extends BaseActivity {
     }
 
     private void guardarRutinasEnFirebase(String clave, List<Rutina> lista) {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
         HashMap<String, Object> datos = new HashMap<>();
         datos.put("categoria", clave);

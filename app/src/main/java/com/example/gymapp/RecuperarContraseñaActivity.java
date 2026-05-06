@@ -1,21 +1,15 @@
 package com.example.gymapp;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.firebase.auth.FirebaseAuth;
 
 public class RecuperarContraseñaActivity extends BaseActivity {
 
     private EditText emailRecoverInput;
-    private Button sendRecoveryButton;
-    private ImageButton btnVolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +17,8 @@ public class RecuperarContraseñaActivity extends BaseActivity {
         setContentView(R.layout.activity_recuperar_contrasenia);
 
         emailRecoverInput = findViewById(R.id.emailRecoverInput);
-        sendRecoveryButton = findViewById(R.id.sendRecoveryButton);
-        btnVolver = findViewById(R.id.btnVolver);
+        Button sendRecoveryButton = findViewById(R.id.sendRecoveryButton);
+        ImageButton btnVolver = findViewById(R.id.btnVolver);
 
 
         btnVolver.setOnClickListener(v -> finish());

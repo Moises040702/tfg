@@ -12,12 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Objects;
+
 public class RegisterActivity extends BaseActivity {
 
     private EditText emailInput, passwordInput, confirmPasswordInput;
-    private Button registerButton;
-    private TextView goLoginText;
-    private ImageButton backButton;
 
     private FirebaseAuth auth;
 
@@ -31,9 +30,9 @@ public class RegisterActivity extends BaseActivity {
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
         confirmPasswordInput = findViewById(R.id.confirmPasswordInput);
-        registerButton = findViewById(R.id.registerButton);
-        goLoginText = findViewById(R.id.goLoginText);
-        backButton = findViewById(R.id.backButton);
+        Button registerButton = findViewById(R.id.registerButton);
+        TextView goLoginText = findViewById(R.id.goLoginText);
+        ImageButton backButton = findViewById(R.id.backButton);
 
         setupPasswordToggle(passwordInput);
         setupPasswordToggle(confirmPasswordInput);
@@ -62,7 +61,7 @@ public class RegisterActivity extends BaseActivity {
 
             auth.createUserWithEmailAndPassword(email, pass)
                     .addOnSuccessListener(result -> {
-                        result.getUser().sendEmailVerification()
+                        Objects.requireNonNull(result.getUser()).sendEmailVerification()
                                 .addOnSuccessListener(aVoid -> {
                                     auth.signOut();
                                     Toast.makeText(this, "Registro correcto. Revisa tu email para verificar la cuenta.", Toast.LENGTH_LONG).show();

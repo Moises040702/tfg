@@ -76,7 +76,7 @@ public class LoginActivity extends BaseActivity {
             String password = passwordInput.getText().toString().trim();
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Completa email y contraseña", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.toast_completa_email_password), Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -96,7 +96,7 @@ public class LoginActivity extends BaseActivity {
                         } else {
 
                             Toast.makeText(this,
-                                    "Debes verificar tu email antes de iniciar sesión",
+                                    getString(R.string.toast_verifica_email),
                                     Toast.LENGTH_LONG).show();
 
                             auth.signOut();
@@ -107,7 +107,9 @@ public class LoginActivity extends BaseActivity {
                     .addOnFailureListener(e -> {
                         entradaMainEnCurso = false;
                         e.printStackTrace();
-                        Toast.makeText(this, "Error " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(this,
+                                getString(R.string.toast_error_con_mensaje, e.getMessage()),
+                                Toast.LENGTH_LONG).show();
                     });
         });
 

@@ -262,7 +262,7 @@ public class AjustesActivity extends BaseActivity {
             if (granted) {
 
                 programarRecordatorio();
-                Toast.makeText(this, "Permiso de notificaciones concedido ✅", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.toast_permiso_notificaciones_concedido), Toast.LENGTH_SHORT).show();
 
             } else {
 
@@ -289,7 +289,7 @@ public class AjustesActivity extends BaseActivity {
                 if (noVolverAPreguntar) {
                     mostrarDialogoIrAjustesNotificaciones();
                 } else {
-                    Toast.makeText(this, "Permiso de notificaciones denegado ❌", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.toast_permiso_notificaciones_denegado), Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -313,10 +313,10 @@ public class AjustesActivity extends BaseActivity {
 
     private void mostrarDialogoIrAjustesNotificaciones() {
         new AlertDialog.Builder(this)
-                .setTitle("Permiso bloqueado")
-                .setMessage("Has bloqueado las notificaciones. Actívalas desde Ajustes para que los recordatorios funcionen.")
-                .setPositiveButton("Ir a Ajustes", (d, w) -> abrirAjustesApp())
-                .setNegativeButton("Cancelar", null)
+                .setTitle(getString(R.string.dialog_permiso_bloqueado_titulo))
+                .setMessage(getString(R.string.dialog_permiso_bloqueado_mensaje))
+                .setPositiveButton(getString(R.string.ir_a_ajustes), (d, w) -> abrirAjustesApp())
+                .setNegativeButton(getString(R.string.cancelar), null)
                 .show();
     }
 

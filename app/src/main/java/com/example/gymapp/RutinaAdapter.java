@@ -17,10 +17,10 @@ import java.util.Locale;
 
 public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder> {
 
-    private List<Rutina> listaRutinas;
-    private Context context;
-    private OnRutinaClickListener clickListener;
-    private OnRutinaLongClickListener longClickListener;
+    private final List<Rutina> listaRutinas;
+    private final Context context;
+    private final OnRutinaClickListener clickListener;
+    private final OnRutinaLongClickListener longClickListener;
 
 
     private static final int COLOR_BICEPS = Color.parseColor("#FFB6C1");
@@ -130,7 +130,7 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
     @Override
     public int getItemCount() { return listaRutinas.size(); }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvNombre, tvCategoria;
         ImageButton btnInfo, btnAccion;
 

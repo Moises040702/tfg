@@ -1,12 +1,12 @@
 package com.example.gymapp;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Button;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,11 +18,9 @@ import java.util.List;
 public class RegistroPesoActivity extends BaseActivity {
 
     private EditText etPeso;
-    private Button btnGuardarPeso;
-    private ImageButton btnVolver;
     private RecyclerView recyclerView;
     private PesoAdapter adapter;
-    private List<PesoRegistro> registros = new ArrayList<>();
+    private final List<PesoRegistro> registros = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +29,8 @@ public class RegistroPesoActivity extends BaseActivity {
         setContentView(R.layout.activity_registro_peso);
 
         etPeso = findViewById(R.id.etPeso);
-        btnGuardarPeso = findViewById(R.id.btnGuardarPeso);
-        btnVolver = findViewById(R.id.btnVolver);
+        Button btnGuardarPeso = findViewById(R.id.btnGuardarPeso);
+        ImageButton btnVolver = findViewById(R.id.btnVolver);
         recyclerView = findViewById(R.id.recyclerViewPesos);
 
         adapter = new PesoAdapter(registros);
@@ -48,20 +46,28 @@ public class RegistroPesoActivity extends BaseActivity {
 
     private void guardarPeso() {
 
-        String pesoStr = etPeso.getText().toString();
+        String pesoStr = etPeso.getText().toString().trim();
 
         if (pesoStr.isEmpty()) {
-            Toast.makeText(this, getString(R.string.ingresa_peso), Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                    this,
+                    getString(R.string.ingresa_peso),
+                    Toast.LENGTH_SHORT
+            ).show();
             return;
         }
 
         try {
 
-            double peso = Double.parseDouble(pesoStr);
+            double peso = Double.parseDouble(pesoStr.replace(",", "."));
 
             // Verificar si ya hay un peso registrado esta semana
             if (yaRegistradoEstaSemana()) {
-                Toast.makeText(this, "Ya has registrado tu peso esta semana", Toast.LENGTH_SHORT).show();
+                Toast.makeText(
+                        this,
+                        getString(R.string.peso_7_dias),
+                        Toast.LENGTH_SHORT
+                ).show();
                 return;
             }
 
@@ -76,11 +82,19 @@ public class RegistroPesoActivity extends BaseActivity {
 
             etPeso.setText("");
 
-            Toast.makeText(this, getString(R.string.peso_guardado), Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                    this,
+                    getString(R.string.peso_guardado),
+                    Toast.LENGTH_SHORT
+            ).show();
 
         } catch (NumberFormatException e) {
 
-            Toast.makeText(this, getString(R.string.valor_invalido), Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                    this,
+                    getString(R.string.valor_invalido),
+                    Toast.LENGTH_SHORT
+            ).show();
         }
     }
 
@@ -95,19 +109,22 @@ public class RegistroPesoActivity extends BaseActivity {
         for (PesoRegistro r : registros) {
             Calendar calRegistro = Calendar.getInstance();
             calRegistro.setTime(r.getFecha());
+
             int semanaRegistro = calRegistro.get(Calendar.WEEK_OF_YEAR);
             int anioRegistro = calRegistro.get(Calendar.YEAR);
 
             if (semanaRegistro == semanaActual && anioRegistro == anioActual) {
-                return true; // Ya hay registro esta semana
+                return true;
             }
         }
+
         return false;
     }
 
     private void cargarPesosFirebase() {
 
         FireStoreManager.obtenerPesos(new FireStoreManager.PesoCallback() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onSuccess(List<PesoRegistro> lista) {
 
@@ -119,9 +136,11 @@ public class RegistroPesoActivity extends BaseActivity {
             @Override
             public void onError(Exception e) {
 
-                Toast.makeText(RegistroPesoActivity.this,
-                        "Error cargando pesos",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(
+                        RegistroPesoActivity.this,
+                        getString(R.string.toast_error_cargando_pesos),
+                        Toast.LENGTH_SHORT
+                ).show();
             }
         });
     }

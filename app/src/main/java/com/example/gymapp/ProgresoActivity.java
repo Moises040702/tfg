@@ -1,5 +1,6 @@
 package com.example.gymapp;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -16,12 +17,10 @@ import java.util.Locale;
 
 public class ProgresoActivity extends BaseActivity {
 
-    private RecyclerView recyclerCalendario;
     private TextView txtMesAnio;
-    private ImageButton btnMesAnterior, btnMesSiguiente, btnVolver;
 
     private CalendarioProgresoAdapter adapter;
-    private ArrayList<DiaCalendario> diasMes = new ArrayList<>();
+    private final ArrayList<DiaCalendario> diasMes = new ArrayList<>();
 
     private Calendar mesActual;
     private HashMap<String, Integer> progresoFirestore = new HashMap<>();
@@ -39,11 +38,11 @@ public class ProgresoActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_progreso);
 
-        recyclerCalendario = findViewById(R.id.recyclerCalendario);
+        RecyclerView recyclerCalendario = findViewById(R.id.recyclerCalendario);
         txtMesAnio = findViewById(R.id.txtMesAnio);
-        btnMesAnterior = findViewById(R.id.btnMesAnterior);
-        btnMesSiguiente = findViewById(R.id.btnMesSiguiente);
-        btnVolver = findViewById(R.id.btnVolver);
+        ImageButton btnMesAnterior = findViewById(R.id.btnMesAnterior);
+        ImageButton btnMesSiguiente = findViewById(R.id.btnMesSiguiente);
+        ImageButton btnVolver = findViewById(R.id.btnVolver);
 
         mesActual = Calendar.getInstance();
 
@@ -89,6 +88,7 @@ public class ProgresoActivity extends BaseActivity {
         });
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void generarCalendario() {
         diasMes.clear();
 
@@ -117,7 +117,7 @@ public class ProgresoActivity extends BaseActivity {
             String fechaKey = keyFormat.format(c.getTime());
             int estado = obtenerEstadoEfectivoDia(c, fechaKey);
 
-            diasMes.add(new DiaCalendario(dia, estado, true, fechaKey));
+            diasMes.add(new DiaCalendario(dia, estado, true));
         }
 
         while (diasMes.size() % 7 != 0) {

@@ -9,8 +9,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,23 +22,18 @@ public class UsuarioActivity extends BaseActivity {
     private FirebaseUser user;
     private FirebaseFirestore db;
 
-    private TextView tvCorreo;
     private TextInputEditText etNombre, etApellidos, etFechaNacimiento, etTelefono, etDNI;
     private Spinner spinnerCiudad;
-    private MaterialButton btnGuardarDatos, btnCambiarContrasena, btnDarseBaja;
-    private ImageButton btnVolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usuario);
 
-
         user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
 
-
-        tvCorreo = findViewById(R.id.tvCorreo);
+        TextView tvCorreo = findViewById(R.id.tvCorreo);
         etNombre = findViewById(R.id.etNombre);
         etApellidos = findViewById(R.id.etApellidos);
         etFechaNacimiento = findViewById(R.id.etFechaNacimiento);
@@ -48,12 +41,11 @@ public class UsuarioActivity extends BaseActivity {
         etDNI = findViewById(R.id.etDNI);
         spinnerCiudad = findViewById(R.id.spinnerCiudad);
 
-        btnGuardarDatos = findViewById(R.id.btnGuardarDatos);
-        btnCambiarContrasena = findViewById(R.id.btnCambiarContrasena);
-        btnDarseBaja = findViewById(R.id.btnDarseBaja);
-        btnVolver = findViewById(R.id.btnVolver);
+        MaterialButton btnGuardarDatos = findViewById(R.id.btnGuardarDatos);
+        MaterialButton btnCambiarContrasena = findViewById(R.id.btnCambiarContrasena);
+        MaterialButton btnDarseBaja = findViewById(R.id.btnDarseBaja);
+        ImageButton btnVolver = findViewById(R.id.btnVolver);
 
-        // Configurar Spinner de ciudades (texto visible traducido según idioma)
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,
                 R.array.ciudades_espana,
@@ -72,7 +64,6 @@ public class UsuarioActivity extends BaseActivity {
         btnCambiarContrasena.setOnClickListener(v -> cambiarContrasena());
         btnDarseBaja.setOnClickListener(v -> darseDeBaja());
 
-
         etFechaNacimiento.addTextChangedListener(new TextWatcher() {
             private String current = "";
 
@@ -89,14 +80,17 @@ public class UsuarioActivity extends BaseActivity {
                     StringBuilder formatted = new StringBuilder();
 
                     int len = clean.length();
+
                     for (int i = 0; i < len && i < 8; i++) {
                         formatted.append(clean.charAt(i));
+
                         if ((i == 1 || i == 3) && i != len - 1) {
                             formatted.append("/");
                         }
                     }
 
                     current = formatted.toString();
+
                     etFechaNacimiento.removeTextChangedListener(this);
                     etFechaNacimiento.setText(current);
                     etFechaNacimiento.setSelection(current.length());
@@ -104,7 +98,6 @@ public class UsuarioActivity extends BaseActivity {
                 }
             }
         });
-
 
         etTelefono.addTextChangedListener(new TextWatcher() {
             private String current = "";
@@ -118,9 +111,14 @@ public class UsuarioActivity extends BaseActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 String input = s.toString().replaceAll("[^0-9]", "");
+
                 if (!input.equals(current)) {
-                    if (input.length() > 9) input = input.substring(0, 9);
+                    if (input.length() > 9) {
+                        input = input.substring(0, 9);
+                    }
+
                     current = input;
+
                     etTelefono.removeTextChangedListener(this);
                     etTelefono.setText(current);
                     etTelefono.setSelection(current.length());
@@ -128,7 +126,6 @@ public class UsuarioActivity extends BaseActivity {
                 }
             }
         });
-
 
         etDNI.addTextChangedListener(new TextWatcher() {
             private String current = "";
@@ -156,6 +153,7 @@ public class UsuarioActivity extends BaseActivity {
                     }
 
                     current = formatted.toString();
+
                     etDNI.removeTextChangedListener(this);
                     etDNI.setText(current);
                     etDNI.setSelection(current.length());
@@ -184,31 +182,61 @@ public class UsuarioActivity extends BaseActivity {
                     }
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(this, "Error cargando datos", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                                this,
+                                getString(R.string.toast_error_cargando_datos),
+                                Toast.LENGTH_SHORT
+                        ).show()
                 );
     }
 
     private void guardarCambios() {
         if (user == null) return;
 
-        String nombre = etNombre.getText() != null ? etNombre.getText().toString().trim() : "";
-        String apellidos = etApellidos.getText() != null ? etApellidos.getText().toString().trim() : "";
-        String fechaNacimiento = etFechaNacimiento.getText() != null ? etFechaNacimiento.getText().toString().trim() : "";
-        String telefono = etTelefono.getText() != null ? etTelefono.getText().toString().trim() : "";
-        String dni = etDNI.getText() != null ? etDNI.getText().toString().trim() : "";
+        String nombre = etNombre.getText() != null
+                ? etNombre.getText().toString().trim()
+                : "";
+
+        String apellidos = etApellidos.getText() != null
+                ? etApellidos.getText().toString().trim()
+                : "";
+
+        String fechaNacimiento = etFechaNacimiento.getText() != null
+                ? etFechaNacimiento.getText().toString().trim()
+                : "";
+
+        String telefono = etTelefono.getText() != null
+                ? etTelefono.getText().toString().trim()
+                : "";
+
+        String dni = etDNI.getText() != null
+                ? etDNI.getText().toString().trim().toUpperCase()
+                : "";
 
         if (nombre.isEmpty() || apellidos.isEmpty()) {
-            Toast.makeText(this, "Rellena al menos nombre y apellidos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                    this,
+                    getString(R.string.toast_usuario_nombre_apellidos_obligatorios),
+                    Toast.LENGTH_SHORT
+            ).show();
             return;
         }
 
         if (!dni.matches("\\d{8}[A-Z]")) {
-            Toast.makeText(this, "DNI debe ser 8 números y 1 letra", Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                    this,
+                    getString(R.string.toast_dni_invalido),
+                    Toast.LENGTH_SHORT
+            ).show();
             return;
         }
 
         if (!telefono.matches("\\d{9}")) {
-            Toast.makeText(this, "El teléfono debe tener 9 cifras", Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                    this,
+                    getString(R.string.toast_telefono_invalido),
+                    Toast.LENGTH_SHORT
+            ).show();
             return;
         }
 
@@ -226,11 +254,20 @@ public class UsuarioActivity extends BaseActivity {
                 .document(user.getUid())
                 .set(datos)
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Datos actualizados", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(
+                            this,
+                            getString(R.string.toast_datos_actualizados),
+                            Toast.LENGTH_SHORT
+                    ).show();
+
                     finish();
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(this, "Error al guardar", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                                this,
+                                getString(R.string.toast_error_guardar_datos),
+                                Toast.LENGTH_SHORT
+                        ).show()
                 );
     }
 
@@ -238,35 +275,59 @@ public class UsuarioActivity extends BaseActivity {
         if (user == null || user.getEmail() == null) return;
 
         String email = user.getEmail();
+
         FirebaseAuth.getInstance().sendPasswordResetEmail(email)
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Correo enviado para cambiar contraseña", Toast.LENGTH_LONG).show();
+                    Toast.makeText(
+                            this,
+                            getString(R.string.toast_correo_cambio_contrasena_enviado),
+                            Toast.LENGTH_LONG
+                    ).show();
+
                     finish();
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(this, "Error al enviar correo", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                                this,
+                                getString(R.string.toast_error_enviar_correo),
+                                Toast.LENGTH_SHORT
+                        ).show()
                 );
     }
 
     private void darseDeBaja() {
-        if (user != null) {
-            db.collection("users")
-                    .document(user.getUid())
-                    .delete()
-                    .addOnSuccessListener(aVoid -> {
-                        user.delete()
-                                .addOnSuccessListener(aVoid1 -> {
-                                    Toast.makeText(this, "Cuenta eliminada", Toast.LENGTH_SHORT).show();
-                                    finishAffinity();
-                                })
-                                .addOnFailureListener(e ->
-                                        Toast.makeText(this, "Error al eliminar cuenta", Toast.LENGTH_SHORT).show()
-                                );
-                    })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(this, "Error al eliminar datos", Toast.LENGTH_SHORT).show()
-                    );
-        }
+        if (user == null) return;
+
+        db.collection("users")
+                .document(user.getUid())
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    user.delete()
+                            .addOnSuccessListener(aVoid1 -> {
+                                Toast.makeText(
+                                        this,
+                                        getString(R.string.toast_cuenta_eliminada),
+                                        Toast.LENGTH_SHORT
+                                ).show();
+
+                                FirebaseAuth.getInstance().signOut();
+                                finishAffinity();
+                            })
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(
+                                            this,
+                                            getString(R.string.toast_error_eliminar_cuenta),
+                                            Toast.LENGTH_SHORT
+                                    ).show()
+                            );
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(
+                                this,
+                                getString(R.string.toast_error_eliminar_datos),
+                                Toast.LENGTH_SHORT
+                        ).show()
+                );
     }
 
     private String getSelectedCityCode() {
@@ -281,7 +342,9 @@ public class UsuarioActivity extends BaseActivity {
     }
 
     private void setSpinnerCityFromStoredValue(String storedValue) {
-        if (storedValue == null || storedValue.trim().isEmpty()) return;
+        if (storedValue == null || storedValue.trim().isEmpty()) {
+            return;
+        }
 
         String[] cityCodes = getResources().getStringArray(R.array.city_codes);
 
@@ -292,8 +355,11 @@ public class UsuarioActivity extends BaseActivity {
             }
         }
 
-        ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) spinnerCiudad.getAdapter();
+        ArrayAdapter<CharSequence> adapter =
+                (ArrayAdapter<CharSequence>) spinnerCiudad.getAdapter();
+
         int position = adapter.getPosition(storedValue);
+
         if (position >= 0) {
             spinnerCiudad.setSelection(position);
         }

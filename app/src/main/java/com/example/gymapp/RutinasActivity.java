@@ -14,10 +14,6 @@ import java.util.ArrayList;
 
 public class RutinasActivity extends BaseActivity {
 
-    private RecyclerView recyclerView;
-    private CategoriaAdapter adapter;
-    private ArrayList<String> categoriasCodigo;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,11 +22,11 @@ public class RutinasActivity extends BaseActivity {
         ImageButton btnVolver = findViewById(R.id.btnVolverRutinas);
         btnVolver.setOnClickListener(v -> onBackPressed());
 
-        recyclerView = findViewById(R.id.recyclerViewRutinas);
+        RecyclerView recyclerView = findViewById(R.id.recyclerViewRutinas);
         FloatingActionButton fab = findViewById(R.id.btnAgregarRutina);
         fab.setVisibility(View.GONE);
 
-        categoriasCodigo = new ArrayList<>();
+        ArrayList<String> categoriasCodigo = new ArrayList<>();
         categoriasCodigo.add("biceps");
         categoriasCodigo.add("chest");
         categoriasCodigo.add("back");
@@ -38,7 +34,7 @@ public class RutinasActivity extends BaseActivity {
         categoriasCodigo.add("shoulders");
         categoriasCodigo.add("abs");
 
-        adapter = new CategoriaAdapter(categoriasCodigo, codigo -> {
+        CategoriaAdapter adapter = new CategoriaAdapter(categoriasCodigo, codigo -> {
             Intent intent = new Intent(RutinasActivity.this, DetalleRutinaActivity.class);
             intent.putExtra("CODIGO_CATEGORIA", codigo);
             startActivity(intent);

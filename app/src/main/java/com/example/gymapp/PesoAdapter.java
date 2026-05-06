@@ -14,8 +14,8 @@ import java.util.Locale;
 
 public class PesoAdapter extends RecyclerView.Adapter<PesoAdapter.ViewHolder> {
 
-    private List<PesoRegistro> registros;
-    private SimpleDateFormat dateFormat =
+    private final List<PesoRegistro> registros;
+    private final SimpleDateFormat dateFormat =
             new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
     public PesoAdapter(List<PesoRegistro> registros) {

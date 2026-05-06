@@ -1,18 +1,20 @@
 package com.example.gymapp;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 public class Rutina {
-    private String id;
-    private String nombre;
-    private String objetivo;
-    private String nivel;
-    private String videoUrl;
+    private final String id;
+    private final String nombre;
+    private final String objetivo;
+    private final String nivel;
+    private final String videoUrl;
     private Date fechaCreacion;
-    private List<String> ejercicios;
+    private final List<String> ejercicios;
     private boolean completada;
 
     public Rutina(String nombre, String objetivo, String nivel, String videoUrl, List<String> ejercicios) {
@@ -38,6 +40,7 @@ public class Rutina {
 
     public List<String> getEjercicios() { return ejercicios; }
 
+    @NonNull
     @Override
     public String toString() {
         return nombre + " (" + nivel + ") - " + objetivo;

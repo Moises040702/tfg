@@ -1,10 +1,12 @@
 package com.example.gymapp;
 
+import androidx.annotation.NonNull;
+
 import java.util.Date;
 
 public class PesoRegistro {
-    private double peso;
-    private Date fecha;
+    private final double peso;
+    private final Date fecha;
 
     public PesoRegistro(double peso, Date fecha) {
         this.peso = peso;
@@ -19,6 +21,7 @@ public class PesoRegistro {
         return fecha;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Peso: " + peso + " kg - Fecha: " + fecha.toString();

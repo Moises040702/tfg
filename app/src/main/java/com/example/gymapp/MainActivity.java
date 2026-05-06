@@ -6,10 +6,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
@@ -25,6 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends BaseActivity {
@@ -106,7 +107,7 @@ public class MainActivity extends BaseActivity {
 
         aplicarPoliticaRecordatorios();
 
-        RecordatorioWorker.mostrarNotificacionSiToca(getApplicationContext(), "APP_OPEN");
+        RecordatorioWorker.mostrarNotificacionSiToca(getApplicationContext());
     }
 
     @Override
@@ -159,37 +160,34 @@ public class MainActivity extends BaseActivity {
             return;
         }
 
-        if (Build.VERSION.SDK_INT >= 33) {
+        boolean granted =
+                ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED;
 
-            boolean granted =
-                    ContextCompat.checkSelfPermission(
-                            this,
-                            Manifest.permission.POST_NOTIFICATIONS
-                    ) == PackageManager.PERMISSION_GRANTED;
+        if (!granted) {
 
-            if (!granted) {
+            boolean yaPreguntado =
+                    prefs.getBoolean("permiso_notificaciones_preguntado", false);
 
-                boolean yaPreguntado =
-                        prefs.getBoolean("permiso_notificaciones_preguntado", false);
+            if (!yaPreguntado) {
 
-                if (!yaPreguntado) {
+                prefs.edit()
+                        .putBoolean("permiso_notificaciones_preguntado", true)
+                        .apply();
 
-                    prefs.edit()
-                            .putBoolean("permiso_notificaciones_preguntado", true)
-                            .apply();
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        REQUEST_CODE_NOTIFICATIONS
+                );
 
-                    ActivityCompat.requestPermissions(
-                            this,
-                            new String[]{Manifest.permission.POST_NOTIFICATIONS},
-                            REQUEST_CODE_NOTIFICATIONS
-                    );
-
-                } else {
-                    cancelarRecordatorio();
-                }
-
-                return;
+            } else {
+                cancelarRecordatorio();
             }
+
+            return;
         }
 
         programarRecordatorio();
@@ -198,8 +196,8 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(
             int requestCode,
-            String[] permissions,
-            int[] grantResults
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults
     ) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -218,8 +216,7 @@ public class MainActivity extends BaseActivity {
                 programarRecordatorio();
 
                 RecordatorioWorker.mostrarNotificacionSiToca(
-                        getApplicationContext(),
-                        "APP_OPEN"
+                        getApplicationContext()
                 );
 
             } else {
@@ -232,11 +229,10 @@ public class MainActivity extends BaseActivity {
                 cancelarRecordatorio();
 
                 boolean noVolverAPreguntar =
-                        Build.VERSION.SDK_INT >= 33 &&
-                                !ActivityCompat.shouldShowRequestPermissionRationale(
-                                        this,
-                                        Manifest.permission.POST_NOTIFICATIONS
-                                );
+                        !ActivityCompat.shouldShowRequestPermissionRationale(
+                                this,
+                                Manifest.permission.POST_NOTIFICATIONS
+                        );
 
                 if (noVolverAPreguntar) {
                     mostrarDialogoIrAjustesNotificaciones();
@@ -268,10 +264,10 @@ public class MainActivity extends BaseActivity {
 
     private void mostrarDialogoIrAjustesNotificaciones() {
         new AlertDialog.Builder(this)
-                .setTitle("Notificaciones bloqueadas")
-                .setMessage("Para recibir recordatorios, activa las notificaciones desde Ajustes del sistema.")
-                .setPositiveButton("Ir a Ajustes", (d, w) -> abrirAjustesApp())
-                .setNegativeButton("Cancelar", null)
+                .setTitle(getString(R.string.dialog_notificaciones_bloqueadas_titulo))
+                .setMessage(getString(R.string.dialog_notificaciones_bloqueadas_mensaje))
+                .setPositiveButton(getString(R.string.ir_a_ajustes), (d, w) -> abrirAjustesApp())
+                .setNegativeButton(getString(R.string.cancelar), null)
                 .show();
     }
 
@@ -288,7 +284,7 @@ public class MainActivity extends BaseActivity {
 
 
     private void guardarAjustesEnFirebase(boolean modoOscuro, boolean notificaciones, boolean recordatorios, String idioma) {
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         HashMap<String, Object> data = new HashMap<>();
         data.put("modoOscuro", modoOscuro);
         data.put("notificaciones", notificaciones);
